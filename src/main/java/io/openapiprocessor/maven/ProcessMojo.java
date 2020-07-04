@@ -19,13 +19,12 @@ package io.openapiprocessor.maven;
 import org.apache.maven.plugin.*;
 import org.apache.maven.plugins.annotations.*;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.shared.utils.io.DirectoryScanner;
 
 import java.io.File;
 import java.util.*;
 
 /**
- * Mojo to run the processor.
+ * run an openapi-processor.
  *
  * @author Martin Hauner
  */
@@ -52,45 +51,13 @@ public class ProcessMojo extends AbstractMojo {
         try {
             Map<String, Object> properties = createProperties ();
 
-            DirectoryScanner sourceScanner = new DirectoryScanner ();
             File sourceRoot = apiPath.getParentFile ();
-            sourceScanner.setBasedir (sourceRoot);
-            sourceScanner.setIncludes ("**/*.yaml", "**/*.yml");
-            sourceScanner.scan ();
-            String[] sourceFiles = sourceScanner.getIncludedFiles ();
+            File targetRoot = new File((String) properties.get (TARGET_DIR));
 
-            long lastModified = 0;
-            for (String source : sourceFiles) {
-                File current = new File (sourceRoot, source);
+            UpToDateCheck upToDateCheck = new UpToDateCheck ();
+            boolean upToDate = upToDateCheck.isUpToDate (sourceRoot, targetRoot);
 
-                if (current.exists () && current.lastModified () > lastModified) {
-                    lastModified = current.lastModified ();
-                }
-            }
-
-
-            DirectoryScanner targetScanner = new DirectoryScanner ();
-            File targetDir = new File((String) properties.get (TARGET_DIR));
-            targetScanner.setBasedir (targetDir);
-            targetScanner.setIncludes ("**/*", "**/*");
-            targetScanner.scan ();
-            String[] targetFiles = targetScanner.getIncludedFiles ();
-
-            boolean outdated = false;
-            if (targetFiles.length == 0) {
-                outdated = true;
-            }
-
-            for (String target : targetFiles) {
-                File current = new File (targetDir, target);
-
-                if (current.exists () && current.lastModified () < lastModified) {
-                    outdated = true;
-                    break;
-                }
-            }
-
-            if (outdated) {
+            if (!upToDate) {
                 getLog().info( "Changes detected - generating target files!" );
 
                 new ProcessorRunner (id, properties)
