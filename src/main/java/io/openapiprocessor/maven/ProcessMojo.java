@@ -57,7 +57,7 @@ public class ProcessMojo extends AbstractMojo {
         }
     }
 
-    private Map<String, Object> createProperties () {
+    private Map<String, Object> createProperties () throws MojoExecutionException {
         Map<String, Object> properties = new HashMap<> ();
 
         addProperties (options, properties);
@@ -94,14 +94,19 @@ public class ProcessMojo extends AbstractMojo {
     }
 
     // copy common api path to openapi-processor props if not set
-    private void setApiPath (Map<String, Object> properties) {
+    private void setApiPath (Map<String, Object> properties) throws MojoExecutionException {
         if (!properties.containsKey (API_PATH)) {
             if (apiPath == null) {
-                warnMissingApiPath();
-                return;
+                throw new MojoExecutionException (this,
+                    "'common <apiPath>' or '" + id + " <apiPath>' not set!",
+                    "'common <apiPath>' or '" + id + " <apiPath>' not set!");
+//                warnMissingApiPath();
+//                return;
             }
 
             properties.put (API_PATH, apiPath);
+        } else {
+            apiPath = new File((String) properties.get (API_PATH));
         }
    }
 
