@@ -19,6 +19,7 @@ package io.openapiprocessor.maven;
 import org.apache.maven.plugin.*;
 import org.apache.maven.plugins.annotations.*;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.shared.utils.io.DirectoryScanner;
 
 import java.io.File;
 import java.util.*;
@@ -49,8 +50,55 @@ public class ProcessMojo extends AbstractMojo {
         System.out.println (id);
 
         try {
-            new ProcessorRunner (id, createProperties ())
-                .run ();
+            Map<String, Object> properties = createProperties ();
+
+            DirectoryScanner sourceScanner = new DirectoryScanner ();
+            File sourceRoot = apiPath.getParentFile ();
+            sourceScanner.setBasedir (sourceRoot);
+            sourceScanner.setIncludes ("**/*.yaml", "**/*.yml");
+            sourceScanner.scan ();
+            String[] sourceFiles = sourceScanner.getIncludedFiles ();
+
+            long lastModified = 0;
+            for (String source : sourceFiles) {
+                File current = new File (sourceRoot, source);
+
+                if (current.exists () && current.lastModified () > lastModified) {
+                    lastModified = current.lastModified ();
+                }
+            }
+
+
+            DirectoryScanner targetScanner = new DirectoryScanner ();
+            File targetDir = new File((String) properties.get (TARGET_DIR));
+            targetScanner.setBasedir (targetDir);
+            targetScanner.setIncludes ("**/*", "**/*");
+            targetScanner.scan ();
+            String[] targetFiles = targetScanner.getIncludedFiles ();
+
+            boolean outdated = false;
+            if (targetFiles.length == 0) {
+                outdated = true;
+            }
+
+            for (String target : targetFiles) {
+                File current = new File (targetDir, target);
+
+                if (current.exists () && current.lastModified () < lastModified) {
+                    outdated = true;
+                    break;
+                }
+            }
+
+            if (outdated) {
+                getLog().info( "Changes detected - generating target files!" );
+
+                new ProcessorRunner (id, properties)
+                    .run ();
+
+            } else {
+                getLog().info( "Nothing to process - all generated target files are up to date." );
+            }
 
         } catch (Exception e) {
             throw new MojoExecutionException ("openapi-processor-" + id + " execution failed!");
