@@ -10,7 +10,36 @@
     <packaging>maven-plugin</packaging>
 
     <name>openapi-processor Maven Plugin</name>
-    <description>a Maven Plugin to run any openapi-processor</description>
+    <description>openapi-processor - converts OpenAPI yaml descriptions to a target format, e.g. Java code (Spring) or json - openapi-processor-maven-plugin module</description>
+    <url>http://openapiprocessor.io</url>
+
+    <organization>
+        <name>openapi-processor</name>
+        <url>https://openapiprocessor.io</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>hauner</id>
+            <name>Martin Hauner</name>
+        </developer>
+    </developers>
+
+    <scm>
+        <url>https://github.com/openapi-processor/openapi-processor-maven</url>
+    </scm>
+
+    <prerequisites>
+        <maven>3.6.0</maven>
+    </prerequisites>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
