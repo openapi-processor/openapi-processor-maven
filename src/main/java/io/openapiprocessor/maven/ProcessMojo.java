@@ -148,18 +148,12 @@ public class ProcessMojo extends AbstractMojo {
                 throw new MojoExecutionException (this,
                     "'common <apiPath>' or '" + id + " <apiPath>' not set!",
                     "'common <apiPath>' or '" + id + " <apiPath>' not set!");
-//                warnMissingApiPath();
-//                return;
             }
 
             properties.put (API_PATH, apiPath);
         } else {
             apiPath = new File((String) properties.get (API_PATH));
         }
-   }
-
-   private void warnMissingApiPath () {
-       getLog ().warn ("'common <apiPath>' or '" + id + " <apiPath>' not set!");
    }
 
 }
