@@ -21,17 +21,24 @@ import org.apache.maven.plugins.annotations.Parameter;
 import java.util.Map;
 
 /**
- * Top Level configuration of a specific processor. Allows nested configurations.
+ * Allow nested configuration.
  *
  * @author Martin Hauner
  */
-public class Options {
+public class Nested {
+
+    @Parameter(required = true)
+    private String name;
 
     @Parameter(required = true)
     private Map<String, Object> values;
 
     @Parameter
     private Nested nested;
+
+    public String getName () {
+        return name;
+    }
 
     public Map<String, Object> getValues () {
         return values;

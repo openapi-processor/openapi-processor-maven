@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 the original authors
+ * Copyright 2019-2020 the original authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,29 +16,26 @@
 
 package io.openapiprocessor.maven;
 
-import org.apache.maven.plugins.annotations.Parameter;
+import com.github.hauner.openapi.api.OpenApiProcessor;
 
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
- * Top Level configuration of a specific processor. Allows nested configurations.
+ * Find the processors using the ServiceLoader.
  *
  * @author Martin Hauner
  */
-public class Options {
+class ProcessorLoader {
 
-    @Parameter(required = true)
-    private Map<String, Object> values;
-
-    @Parameter
-    private Nested nested;
-
-    public Map<String, Object> getValues () {
-        return values;
+    static List<OpenApiProcessor> load(ClassLoader classLoader) {
+        return asList (ServiceLoader.load (OpenApiProcessor.class, classLoader));
     }
 
-    public Nested getNested () {
-        return nested;
+    static List<OpenApiProcessor> asList(Iterable<OpenApiProcessor> processors) {
+        return StreamSupport.stream (processors.spliterator(), false)
+            .collect(Collectors.toList());
     }
 
 }
