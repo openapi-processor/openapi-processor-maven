@@ -192,7 +192,7 @@ To run a second processor add another `<execution>` element. Here is an example 
 
         <execution>
             <id>json</id>
-            <phase>generate-resources</phase> <!-- 1 -->
+            <phase>generate-resources</phase> <!--1-->
 
             <configuration>
                 <id>json</id>
