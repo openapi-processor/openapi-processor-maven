@@ -103,20 +103,20 @@ Here is an example to run `openapi-processor-spring` that explains the configura
 <plugin>
     <executions>
         <execution>
-            <id>spring</id> <!-- 1 -->
-            <phase>generate-sources</phase> <!-- 2 -->
+            <id>spring</id> <!--1-->
+            <phase>generate-sources</phase> <!--2-->
 
             <configuration>
-                <id>spring</id> <!-- 3 -->
+                <id>spring</id> <!--3-->
 
-                <!-- 4
-                <apiPath>${project.basedir}/src/api/openapi.yaml</apiPath>
+                <!--
+                <apiPath>${project.basedir}/src/api/openapi.yaml</apiPath> <!--4-->
                 -->
 
-                <options> <!-- 5 -->
+                <options> <!--5-->
                     <values>
-                        <targetDir>${project.basedir}/target/generated-sources/openapi</targetDir> <!-- 6 -->
-                        <mapping>${project.basedir}/src/api/mapping.yaml</mapping> <!-- 7 -->
+                        <targetDir>${project.basedir}/target/generated-sources/openapi</targetDir> <!--6-->
+                        <mapping>${project.basedir}/src/api/mapping.yaml</mapping> <!--7-->
                         <parser>OPENAPI4J</parser>
                         <showWarnings>true</showWarnings>
                     </values>
@@ -132,7 +132,7 @@ Here is an example to run `openapi-processor-spring` that explains the configura
             </configuration>
 
             <goals>
-                <goal>process</goal> <!-- 8 -->
+                <goal>process</goal> <!--8-->
             </goals>
         </execution>
     </executions>
