@@ -1,0 +1,20 @@
+![openapi-processor-gradle logo](docs/modules/ROOT/images/openapi-processor-maven@1280x200.png)
+
+
+# openapi-processor-maven
+
+a maven plugin based on the [openapi-processor-api][oap-api] to handle any openapi-processor without an explicit dependency on the processor.
+
+# documentation
+
+See [here][oap-docs].
+
+
+
+[badge-license]: https://img.shields.io/badge/License-Apache%202.0-blue.svg?labelColor=313A42
+[badge-ci]: https://github.com/openapi-processor/openapi-processor-maven/workflows/ci/badge.svg
+[workflow-ci]: https://github.com/openapi-processor/openapi-processor-maven/actions?query=workflow%3Aci
+
+[oap-api]: https://github.com/openapi-processor/openapi-processor-api
+[oap-docs]: https://docs.openapiprocessor.io/maven
+[oap-license]: https://github.com/openapi-processor/openapi-processor-maven/blob/master/LICENSE
