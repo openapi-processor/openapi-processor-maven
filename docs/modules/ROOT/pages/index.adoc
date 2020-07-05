@@ -110,8 +110,8 @@ Here is an example to run `openapi-processor-spring` that explains the configura
                 <id>spring</id> <!--3-->
 
                 <!--
-                <apiPath>${project.basedir}/src/api/openapi.yaml</apiPath> <!--4-->
-                -->
+                <apiPath>${project.basedir}/src/api/openapi.yaml</apiPath>
+                --> <!--4-->
 
                 <options> <!--5-->
                     <values>
