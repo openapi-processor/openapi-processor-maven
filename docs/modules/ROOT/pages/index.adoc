@@ -1,0 +1,274 @@
+:author: Martin Hauner
+:page-title: openapi-processor-maven
+:page-aliases: current@gradle:ROOT:index.adoc, latest@gradle:ROOT:index.adoc
+:badge-license: https://img.shields.io/badge/License-Apache%202.0-blue.svg?labelColor=313A42
+:badge-ci: https://github.com/openapi-processor/openapi-processor-maven/workflows/ci/badge.svg
+:oapj-ci: https://github.com/openapi-processor/openapi-processor-maven/actions?query=workflow%3Aci
+:oapj-license: https://github.com/openapi-processor/openapi-processor-maven/blob/master/LICENSE
+:oap-api: https://github.com/openapi-processor/openapi-processor-api
+
+//
+// content
+//
+image:openapi-processor-maven$$@$$1280x200.png[openapi-processor-maven]
+
+// badges
+//link:{oapj-ci}[image:{badge-ci}[]]
+link:{oapj-license}[image:{badge-license}[]]
+
+
+a maven plugin based on the link:{oap-api}[openapi-processor-api] to handle any openapi-processor without an explicit dependency on the processor.
+
+== compatibility
+
+[cols="3*",options="header"]
+|===
+| plugin version
+| minimum maven version
+| description
+
+| 1.0.0.M1 (not yet released)
+| 3.6 (?)
+a| supports processors with new `io.openapiprocessor` and old `com.github.hauner.openapi` group id
+|===
+
+
+== plugin configuration
+
+The first step of the configuration is to add the plugin, and the processor(s) to an existing project `pom.xml` into the `<plugins/>` block.
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" ... >
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>io.openapiprocessor</groupId>
+                <artifactId>openapi-processor-maven-plugin</artifactId>
+                <version>1.0.0.M1-SNAPSHOT</version>
+
+                <!-- ... next step ... -->
+            </plugin>
+        </plugins>
+    </build>
+</project>
+----
+
+The processors are dependencies of the plugin, and they are expected in the `<plugin/>` block added in the first step.
+
+[source,xml]
+----
+<plugin>
+    <dependencies>
+        <dependency>
+            <groupId>io.openapiprocessor</groupId>
+            <artifactId>openapi-processor-spring</artifactId>
+            <version>1.0.0.M15</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.hauner.openapi</groupId>
+            <artifactId>openapi-processor-json</artifactId>
+            <version>1.0.0.M4</version>
+        </dependency>
+    </dependencies>
+
+    <!-- ... next step ... -->
+</plugin>
+----
+
+Then it should know where the processors will find the input OpenAPI yaml files using the `<apiPath/>` element:
+
+[source,xml]
+----
+<plugin>
+    <configuration>
+        <apiPath>${project.basedir}/src/api/openapi.yaml</apiPath>
+    </configuration>
+
+    <!-- ... next step ... -->
+</plugin>
+----
+
+* `*<apiPath/>*`, defines the path to the openapi yaml file. This is usually the same for all processors and adding it directly into the plugin `<configuration/>` block sets it for all processors.
+
+Next step is to configure the goals for processing. The plugin has only a single goal `process` that can run any processor. It is configured by an `<execution/>` element to run a specific processor.
+
+If maven should run multiple processors, multiple `<execution/>` s are needed.
+
+Here is an example to run `openapi-processor-spring` that explains the configuration details:
+
+[source,xml]
+----
+<plugin>
+    <executions>
+        <execution>
+            <id>spring</id> <!-- 1 -->
+            <phase>generate-sources</phase> <!-- 2 -->
+
+            <configuration>
+                <id>spring</id> <!-- 3 -->
+
+                <!-- 4
+                <apiPath>${project.basedir}/src/api/openapi.yaml</apiPath>
+                -->
+
+                <options> <!-- 5 -->
+                    <values>
+                        <targetDir>${project.basedir}/target/generated-sources/openapi</targetDir> <!-- 6 -->
+                        <mapping>${project.basedir}/src/api/mapping.yaml</mapping> <!-- 7 -->
+                        <parser>OPENAPI4J</parser>
+                        <showWarnings>true</showWarnings>
+                    </values>
+
+                    <nested>
+                        <name>foo</name>
+                        <values>
+                            <bar>foo-bar</foobar>
+                        </values>
+                    </nested>
+
+                </options>
+            </configuration>
+
+            <goals>
+                <goal>process</goal> <!-- 8 -->
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+----
+
+<1> `*<id/>*`: **execution id** of the goal (choose your id). It is necessary to configure multiple executions.
+
+<2> `*<phase/>*` **phase** (mandatory): openapi-processor-spring generates java code, so the `<phase/>` should be `generate-source`. This tells maven to run the goal before compiling anything.
+
+<3> `*<id/>*` **processor id** (mandatory): this configures the openapi-processor the goal should run. The processor id must match exactly with the name of the processor. The convention is, that the last part of the processors artifact name is the processor id.
++
+If the artifact of a processor is called `openapi-processor-x`, the last part `x` is the id of the processor. For example for `openapi-processor-spring` the id is `spring`, for `openapi-processor-json` the id is `json`.
+
+<4> `*<apiPath/>*` (optional): the path to the open api yaml file. If set inside an `<execution>` `<configuration/>` it overrides the parent `apiPath` set in the `<plugin>` `<configuration/>`.
+
+<5> `*<options/>*` (mandatory): **processor specific options**, the configuration of a single processor can have any number of additional parameters defined by the processor (all options will be passed as a map to the processor with the option name as the key). The nested `*<values/>*` element defines that map.
++
+To allow any level of nesting it is possible to create `*<nested/>*` option maps, i.e. `*<nested/>*` can contain another `*<nested/>*` element and so on. In the configuration above the plugin would pass the following map to the processor:
++
+[source,json,title=json notation]
+----
+{
+  "targetDir": "<basedir path>/target/generated-sources/openapi",
+  "mapping": "<basedir path>/src/api/mapping.yaml",
+  "parser": "OPENAPI4J",
+  "showWarnings":true,
+  "foo": {
+    "bar": "foo-bar"
+  }
+}
+----
+
+<6> `*<targetDir/>*` **target directory** (mandatory): the directory the processor should use for its output. By convention a processor should use this key to as the output directory.
+
+<7> the rest of the options are processor specific. See xref:spring::index.doc[openapi-processor-spring].
+
+<8> `*<goal/>*` **goal** (mandatory): this is the goal maven should run. Since the plugin does only have a single goal the value is always `process`.
+
+
+To run a second processor add another `<execution>` element. Here is an example that configures xref:spring:ROOT:index.adoc[openapi-processor-spring] and xref:json:ROOT:index.adoc[openapi-processor-json]:
+
+
+[source,xml]
+----
+<plugin>
+    <executions>
+        <execution>
+            <id>spring</id>
+            <phase>generate-sources</phase>
+
+            <configuration>
+                <id>spring</id>
+                <!-- ... -->
+            </configuration>
+        </execution>
+
+        <execution>
+            <id>json</id>
+            <phase>generate-resources</phase> <!-- 1 -->
+
+            <configuration>
+                <id>json</id>
+                <!-- ... -->
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+----
+
+<1> uses `generate-resources` phase for the json output, to consider it as a resource.
+
+
+== using the processor output
+
+So far the plugin processes the given openapi yaml and writes the output to the given target directory but maven ignores the output.
+
+It is necessary to tell maven to use the generated files. In case of generated java source files maven should compile them. The *build-helper-maven-plugin* is used to for this:
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" ...>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>oap-sources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/openapi</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+
+
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+</project>
+----
+
+This tells the *build-helper-maven-plugin* to add the processors `targetDir` as an additional source folder to the project.
+
+Maven will now include the generated files when it compiles the project.
+
+If the output of the processor (e.g. generated by openapi-processor-json) should be used as resource the *build-helper-maven-plugin* has a goal for this too. Just add another `<excecution/>` using the `add-resource` goal:
+
+[source,xml]
+----
+<execution>
+    <id>oap-resources</id>
+    <phase>generate-resources</phase>
+    <goals>
+        <goal>add-resource</goal>
+    </goals>
+    <configuration>
+        <resources>
+            <resource>
+                <directory>${project.build.directory}/generated-resources/json</directory>
+            </resource>
+        </resources>
+    </configuration>
+</execution>
+----
+
+
+== Samples
+
+See the maven sample in the xref:sample::index.adoc[samples] for a working spring boot example.
