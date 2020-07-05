@@ -138,4 +138,15 @@
         </pluginManagement>
     </build>
 
+    <distributionManagement>
+          <repository>
+              <id>oap-releases</id>
+              <url>https://api.bintray.com/maven/openapi-processor/primary/openapi-processor-maven/;publish=1;override=0</url>
+          </repository>
+          <snapshotRepository>
+              <id>oap-snapshots</id>
+              <url>https://oss.jfrog.org/oss-snapshot-local/</url>
+          </snapshotRepository>
+    </distributionManagement>
+
 </project>
