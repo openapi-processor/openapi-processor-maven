@@ -1,20 +1,36 @@
-![openapi-processor-gradle logo](docs/modules/ROOT/images/openapi-processor-maven@1280x200.png)
+:badge-license: https://img.shields.io/badge/License-Apache%202.0-blue.svg?labelColor=313A42
+:badge-ci: https://github.com/openapi-processor/openapi-processor-maven/workflows/ci/badge.svg
+:workflow-ci: https://github.com/openapi-processor/openapi-processor-maven/actions?query=workflow%3Aci
 
+:oap-api: https://github.com/openapi-processor/openapi-processor-api
+:oap-ci: https://github.com/openapi-processor/openapi-processor-maven/actions?query=workflow%3Aci
+:oap-docs: https://docs.openapiprocessor.io/maven
+:oap-license: https://github.com/openapi-processor/openapi-processor-maven/blob/master/LICENSE
 
-# openapi-processor-maven
+// badges
+//link:{oaps-ci}[image:{badge-ci}[]]
+//link:{oaps-license}[image:{badge-license}[]]
 
-a maven plugin based on the [openapi-processor-api][oap-api] to handle any openapi-processor without an explicit dependency on the processor.
+++++
+<p align="center">
+  <img src="docs/modules/ROOT/images/openapi-processor-maven@1280x200.png">
+</p>
+++++
 
-# documentation
+== openapi-processor-maven
 
-See [here][oap-docs].
+a maven plugin based on the link:{oap-api}[openapi-processor-api] to handle any openapi-processor without an explicit dependency on the processor.
 
+== documentation
 
+See link:{oap-docs}[here].
 
-[badge-license]: https://img.shields.io/badge/License-Apache%202.0-blue.svg?labelColor=313A42
-[badge-ci]: https://github.com/openapi-processor/openapi-processor-maven/workflows/ci/badge.svg
-[workflow-ci]: https://github.com/openapi-processor/openapi-processor-maven/actions?query=workflow%3Aci
+== snapshots
 
-[oap-api]: https://github.com/openapi-processor/openapi-processor-api
-[oap-docs]: https://docs.openapiprocessor.io/maven
-[oap-license]: https://github.com/openapi-processor/openapi-processor-maven/blob/master/LICENSE
+=== repository
+
+https://oss.jfrog.org/artifactory/oss-snapshot-local
+
+=== artifacts
+
+https://oss.jfrog.org/oss-snapshot-local/io/openapiprocessor/openapi-processor-maven
