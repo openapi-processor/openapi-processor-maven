@@ -6,7 +6,7 @@
 
     <groupId>io.openapiprocessor</groupId>
     <artifactId>openapi-processor-maven-plugin</artifactId>
-    <version>1.0.0.M1</version>
+    <version>1.0.0.M2-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <name>openapi-processor Maven Plugin</name>
@@ -60,7 +60,7 @@
             <!-- plugin interfaces and base classes -->
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
-            <version>3.6.0</version>
+            <version>3.6.3</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -74,7 +74,7 @@
             <!-- annotations used to describe the plugin meta-data -->
             <groupId>org.apache.maven.plugin-tools</groupId>
             <artifactId>maven-plugin-annotations</artifactId>
-            <version>3.5</version>
+            <version>3.6.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -93,8 +93,18 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <version>3.6.0</version>
+            </plugin>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-deploy-plugin</artifactId>
+              <version>3.0.0-M1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.2.1</version>
                 <executions>
                     <execution>
                         <id>sources</id>
@@ -107,7 +117,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.2.0</version>
                 <configuration>
                     <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
                 </configuration>
@@ -121,21 +131,6 @@
                 </executions>
             </plugin>
         </plugins>
-
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-plugin-plugin</artifactId>
-                    <version>3.6.0</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-site-plugin</artifactId>
-                    <version>3.8.2</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
     </build>
 
     <distributionManagement>
@@ -145,7 +140,7 @@
           </repository>
           <snapshotRepository>
               <id>oap-snapshots</id>
-              <url>https://oss.jfrog.org/oss-snapshot-local/</url>
+              <url>https://oss.jfrog.org/oss-snapshot-local</url>
           </snapshotRepository>
     </distributionManagement>
 
