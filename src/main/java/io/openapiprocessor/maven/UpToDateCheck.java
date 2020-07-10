@@ -52,6 +52,10 @@ public class UpToDateCheck {
     }
 
     private String[] scanOutput (File output) {
+        if (!output.exists ()) {
+            return new String[0];
+        }
+
         DirectoryScanner targetScanner = new DirectoryScanner ();
         targetScanner.setBasedir (output);
         targetScanner.setIncludes ("**/*", "**/*");
