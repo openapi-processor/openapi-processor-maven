@@ -44,10 +44,6 @@ public class ProcessMojo extends AbstractMojo {
 
     @Override
     public void execute () throws MojoExecutionException, MojoFailureException {
-        System.out.println ("openapi-processor!!!");
-        System.out.println (apiPath);
-        System.out.println (id);
-
         try {
             Map<String, Object> properties = createProperties ();
 
