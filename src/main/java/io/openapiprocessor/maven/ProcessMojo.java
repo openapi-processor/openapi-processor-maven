@@ -64,7 +64,7 @@ public class ProcessMojo extends AbstractMojo {
             }
 
         } catch (Exception e) {
-            throw new MojoExecutionException ("openapi-processor-" + id + " execution failed!");
+            throw new MojoExecutionException ("openapi-processor-" + id + " execution failed!", e);
         }
     }
 
