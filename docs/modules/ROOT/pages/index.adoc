@@ -27,7 +27,7 @@ a maven plugin based on the link:{oap-api}[openapi-processor-api] to handle any 
 | minimum maven version
 | description
 
-| 1.0.0.M1
+| 1.0.0.M2
 | 3.6
 a| supports processors with new `io.openapiprocessor` and old `com.github.hauner.openapi` group id
 |===
@@ -46,7 +46,7 @@ The first step of the configuration is to add the plugin, and the processor(s) t
             <plugin>
                 <groupId>io.openapiprocessor</groupId>
                 <artifactId>openapi-processor-maven-plugin</artifactId>
-                <version>1.0.0.M1-SNAPSHOT</version>
+                <version>1.0.0.M2</version>
 
                 <!-- ... next step ... -->
             </plugin>
