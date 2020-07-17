@@ -10,7 +10,7 @@
     <packaging>maven-plugin</packaging>
 
     <name>openapi-processor Maven Plugin</name>
-    <description>openapi-processor - converts OpenAPI yaml descriptions to a target format, e.g. Java code (Spring) or json - openapi-processor-maven-plugin module</description>
+    <description>maven plugin to run any openapi-processor from maven</description>
     <url>http://openapiprocessor.io</url>
 
     <organization>
