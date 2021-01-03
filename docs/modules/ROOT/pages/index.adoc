@@ -1,6 +1,5 @@
 :author: Martin Hauner
 :page-title: openapi-processor-maven
-:page-aliases: current@maven:ROOT:index.adoc, latest@maven:ROOT:index.adoc
 :badge-license: https://img.shields.io/badge/License-Apache%202.0-blue.svg?labelColor=313A42
 :badge-ci: https://github.com/openapi-processor/openapi-processor-maven/workflows/ci/badge.svg
 :oapj-ci: https://github.com/openapi-processor/openapi-processor-maven/actions?query=workflow%3Aci
@@ -67,9 +66,9 @@ The processors are dependencies of the plugin, and they are expected in the `<pl
             <version>1.0.0.M15</version>
         </dependency>
         <dependency>
-            <groupId>com.github.hauner.openapi</groupId>
+            <groupId>io.openapiprocessor</groupId>
             <artifactId>openapi-processor-json</artifactId>
-            <version>1.0.0.M4</version>
+            <version>1.0.0.M5</version>
         </dependency>
     </dependencies>
 
