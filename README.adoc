@@ -7,9 +7,13 @@
 :oap-docs: https://docs.openapiprocessor.io/maven
 :oap-license: https://github.com/openapi-processor/openapi-processor-maven/blob/master/LICENSE
 
+:oap-central: https://search.maven.org/search?q=io.openapiprocessor
+:badge-central: https://img.shields.io/maven-central/v/io.openapiprocessor/openapi-processor-maven?label=Maven%20Central
+
 // badges
 //link:{oaps-ci}[image:{badge-ci}[]]
 //link:{oaps-license}[image:{badge-license}[]]
+link:{oap-central}[image:{badge-central}[]]
 
 ++++
 <p align="center">
@@ -25,12 +29,8 @@ a maven plugin based on the link:{oap-api}[openapi-processor-api] to handle any 
 
 See link:{oap-docs}[here].
 
-== snapshots
+== snapshot repository
 
-=== repository
+https://oss.sonatype.org/content/repositories/snapshots
 
-https://oss.jfrog.org/artifactory/oss-snapshot-local
 
-=== artifacts
-
-https://oss.jfrog.org/oss-snapshot-local/io/openapiprocessor/openapi-processor-maven
