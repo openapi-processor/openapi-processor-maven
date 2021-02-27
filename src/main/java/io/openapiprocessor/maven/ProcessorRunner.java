@@ -16,8 +16,6 @@
 
 package io.openapiprocessor.maven;
 
-import com.github.hauner.openapi.api.OpenApiProcessor;
-
 import java.util.Map;
 import java.util.Optional;
 
@@ -39,19 +37,30 @@ class ProcessorRunner {
 
     void run () {
         try {
-            getProcessor ().ifPresent (p -> {
-                p.run (processorProps);
-            });
+            Optional<io.openapiprocessor.api.v1.OpenApiProcessor> processorV1 = ProcessorLoader
+                .findProcessorV1 (processorName, this.getClass ().getClassLoader ());
+
+            if(processorV1.isPresent ()) {
+                processorV1.get ().run (processorProps);
+                return;
+            }
+
+            Optional<io.openapiprocessor.api.OpenApiProcessor> processor = ProcessorLoader
+                .findProcessor (processorName, this.getClass ().getClassLoader ());
+
+            if(processor.isPresent ()) {
+                processor.get ().run (processorProps);
+                return;
+            }
+
+            Optional<com.github.hauner.openapi.api.OpenApiProcessor> processorOld = ProcessorLoader
+                .findProcessorOld (processorName, this.getClass ().getClassLoader ());
+
+            processorOld.ifPresent (openApiProcessor -> openApiProcessor.run (processorProps));
+
         } catch (Exception e) {
             throw e;
         }
-    }
-
-    private Optional<OpenApiProcessor> getProcessor () {
-        return ProcessorLoader.load (this.getClass ().getClassLoader ())
-            .stream ()
-            .filter (p -> p.getName ().equals (processorName))
-            .findFirst ();
     }
 
 }

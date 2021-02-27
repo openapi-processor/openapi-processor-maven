@@ -85,7 +85,7 @@
         <dependency>
             <groupId>io.openapiprocessor</groupId>
             <artifactId>openapi-processor-api</artifactId>
-            <version>1.1.0</version>
+            <version>2021.1</version>
         </dependency>
     </dependencies>
 

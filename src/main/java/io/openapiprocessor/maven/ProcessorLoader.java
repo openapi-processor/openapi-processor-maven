@@ -16,11 +16,7 @@
 
 package io.openapiprocessor.maven;
 
-import com.github.hauner.openapi.api.OpenApiProcessor;
-
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * Find the processors using the ServiceLoader.
@@ -29,13 +25,47 @@ import java.util.stream.StreamSupport;
  */
 class ProcessorLoader {
 
-    static List<OpenApiProcessor> load(ClassLoader classLoader) {
-        return asList (ServiceLoader.load (OpenApiProcessor.class, classLoader));
+
+    public static Optional<io.openapiprocessor.api.v1.OpenApiProcessor> findProcessorV1(
+        String processorName, ClassLoader classLoader) {
+
+        List<io.openapiprocessor.api.v1.OpenApiProcessor> processors = new ArrayList<> ();
+
+        ServiceLoader.load (io.openapiprocessor.api.v1.OpenApiProcessor.class, classLoader)
+            .forEach (processors::add);
+
+        return processors
+            .stream()
+            .filter (p -> p.getName ().equals (processorName))
+            .findFirst ();
     }
 
-    static List<OpenApiProcessor> asList(Iterable<OpenApiProcessor> processors) {
-        return StreamSupport.stream (processors.spliterator(), false)
-            .collect(Collectors.toList());
+    public static Optional<io.openapiprocessor.api.OpenApiProcessor> findProcessor(
+        String processorName, ClassLoader classLoader) {
+
+        List<io.openapiprocessor.api.OpenApiProcessor> processors = new ArrayList<> ();
+
+        ServiceLoader.load (io.openapiprocessor.api.OpenApiProcessor.class, classLoader)
+            .forEach (processors::add);
+
+        return processors
+            .stream()
+            .filter (p -> p.getName ().equals (processorName))
+            .findFirst ();
+    }
+
+    public static Optional<com.github.hauner.openapi.api.OpenApiProcessor> findProcessorOld(
+        String processorName, ClassLoader classLoader) {
+
+        List<com.github.hauner.openapi.api.OpenApiProcessor> processors = new ArrayList<> ();
+
+        ServiceLoader.load (com.github.hauner.openapi.api.OpenApiProcessor.class, classLoader)
+            .forEach (processors::add);
+
+        return processors
+            .stream()
+            .filter (p -> p.getName ().equals (processorName))
+            .findFirst ();
     }
 
 }
