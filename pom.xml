@@ -49,10 +49,16 @@
     </properties>
 
     <repositories>
-          <repository>
-              <id>io.openapiprocessor</id>
-              <url>https://dl.bintray.com/openapi-processor/primary</url>
-          </repository>
+        <!--
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+        -->
+        <repository>
+            <id>bintray.obsolete</id>
+            <url>https://dl.bintray.com/openapi-processor/primary</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -134,14 +140,14 @@
     </build>
 
     <distributionManagement>
-          <repository>
-              <id>oap-releases</id>
-              <url>https://api.bintray.com/maven/openapi-processor/primary/openapi-processor-maven/;publish=1;override=0</url>
-          </repository>
-          <snapshotRepository>
-              <id>oap-snapshots</id>
-              <url>https://oss.jfrog.org/oss-snapshot-local</url>
-          </snapshotRepository>
+        <repository>
+            <id>oap-releases</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+        </repository>
+        <snapshotRepository>
+            <id>oap-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
     </distributionManagement>
 
 </project>
