@@ -5,6 +5,8 @@
 :oapj-ci: https://github.com/openapi-processor/openapi-processor-maven/actions?query=workflow%3Aci
 :oapj-license: https://github.com/openapi-processor/openapi-processor-maven/blob/master/LICENSE
 :oap-api: https://github.com/openapi-processor/openapi-processor-api
+:oap-central: https://search.maven.org/search?q=io.openapiprocessor
+:badge-central: https://img.shields.io/maven-central/v/io.openapiprocessor/openapi-processor-maven?label=Maven%20Central
 
 //
 // content
@@ -14,7 +16,7 @@ image:openapi-processor-maven$$@$$1280x200.png[openapi-processor-maven]
 // badges
 //link:{oapj-ci}[image:{badge-ci}[]]
 link:{oapj-license}[image:{badge-license}[]]
-
+link:{oap-central}[image:{badge-central}[]]
 
 a maven plugin based on the link:{oap-api}[openapi-processor-api] to handle any openapi-processor without an explicit dependency on the processor.
 
@@ -25,6 +27,12 @@ a maven plugin based on the link:{oap-api}[openapi-processor-api] to handle any 
 | plugin version
 | minimum maven version
 | description
+
+| 2021.1
+| 3.6
+a| supports processors with new `io.openapiprocessor`  group id
+
+3+| &darr; old (deprecated)
 
 | 1.0.0.M2
 | 3.6
@@ -45,7 +53,8 @@ The first step of the configuration is to add the plugin, and the processor(s) t
             <plugin>
                 <groupId>io.openapiprocessor</groupId>
                 <artifactId>openapi-processor-maven-plugin</artifactId>
-                <version>1.0.0.M2</version>
+                <!-- update to latest version, see maven central badge at top -->
+                <version>2021.1</version>
 
                 <!-- ... next step ... -->
             </plugin>
@@ -63,12 +72,12 @@ The processors are dependencies of the plugin, and they are expected in the `<pl
         <dependency>
             <groupId>io.openapiprocessor</groupId>
             <artifactId>openapi-processor-spring</artifactId>
-            <version>1.0.0.M15</version>
+            <version>2021.2</version>
         </dependency>
         <dependency>
             <groupId>io.openapiprocessor</groupId>
             <artifactId>openapi-processor-json</artifactId>
-            <version>1.0.0.M5</version>
+            <version>2021.2</version>
         </dependency>
     </dependencies>
 
