@@ -31,6 +31,5 @@ See link:{oap-docs}[here].
 
 == snapshot repository
 
-https://oss.sonatype.org/content/repositories/snapshots
-
+to use snapshot versions add `https://oss.sonatype.org/content/repositories/snapshots` as maven repository to your build file.
 
