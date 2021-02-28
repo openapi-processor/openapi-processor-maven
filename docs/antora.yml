@@ -1,5 +1,5 @@
 name: maven
 title: oap-maven
-version: master
+version: 2021.1
 nav:
 - modules/ROOT/nav.adoc
