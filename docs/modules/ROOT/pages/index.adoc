@@ -20,6 +20,8 @@ link:{oap-central}[image:{badge-central}[]]
 
 a maven plugin based on the link:{oap-api}[openapi-processor-api] to handle any openapi-processor without an explicit dependency on the processor.
 
+NOTE: unfortunately it is necessary to configure a few xref:oap::jdk.adoc[additional jvm parameter] to run the processor with JDK 16+
+
 == compatibility
 
 [cols="3*",options="header"]
