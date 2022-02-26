@@ -43,13 +43,21 @@ public class ProcessMojo extends AbstractMojo {
     private Options options;
 
     @Override
-    public void execute () throws MojoExecutionException, MojoFailureException {
+    public void execute () throws MojoExecutionException {
+        String processor = String.format ("openapi-processor-%s", id);
+
         try {
+            getLog().info(String.format ("current processor - %s", processor));
+
             Map<String, Object> properties = createProperties ();
 
             File sourceRoot = apiPath.getParentFile ();
-            File targetRoot = new File((String) properties.get (TARGET_DIR));
+            getLog().info(String.format ("apiPath - %s", sourceRoot));
 
+            String targetDir = (String) properties.get (TARGET_DIR);
+            getLog().info(String.format ("targetDir - %s", targetDir));
+
+            File targetRoot = new File(targetDir);
             UpToDateCheck upToDateCheck = new UpToDateCheck ();
             boolean upToDate = upToDateCheck.isUpToDate (sourceRoot, targetRoot);
 
@@ -64,7 +72,7 @@ public class ProcessMojo extends AbstractMojo {
             }
 
         } catch (Exception e) {
-            throw new MojoExecutionException ("openapi-processor-" + id + " execution failed!", e);
+            throw new MojoExecutionException (String.format("Execution failed - %s", processor), e);
         }
     }
 
