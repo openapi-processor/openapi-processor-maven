@@ -6,7 +6,7 @@
 
     <groupId>io.openapiprocessor</groupId>
     <artifactId>openapi-processor-maven-plugin</artifactId>
-    <version>2021.2-SNAPSHOT</version>
+    <version>2022.1-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <name>openapi-processor Maven Plugin</name>
