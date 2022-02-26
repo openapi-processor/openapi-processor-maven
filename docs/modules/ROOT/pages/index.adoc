@@ -22,26 +22,6 @@ a maven plugin based on the link:{oap-api}[openapi-processor-api] to handle any 
 
 NOTE: unfortunately it is necessary to configure a few xref:oap::jdk.adoc[additional jvm parameter] to run the processor with JDK 16+
 
-== compatibility
-
-[cols="3*",options="header"]
-|===
-| plugin version
-| minimum maven version
-| description
-
-| 2021.1
-| 3.6
-a| supports processors with new `io.openapiprocessor`  group id
-
-3+| &darr; old (deprecated)
-
-| 1.0.0.M2
-| 3.6
-a| supports processors with new `io.openapiprocessor` and old `com.github.hauner.openapi` group id
-|===
-
-
 == plugin configuration
 
 The first step of the configuration is to add the plugin, and the processor(s) to an existing project `pom.xml` into the `<plugins/>` block.
@@ -55,8 +35,8 @@ The first step of the configuration is to add the plugin, and the processor(s) t
             <plugin>
                 <groupId>io.openapiprocessor</groupId>
                 <artifactId>openapi-processor-maven-plugin</artifactId>
-                <!-- update to latest version, see maven central badge at top -->
-                <version>2021.1</version>
+                <!-- update to the latest version, see maven central badge at top -->
+                <version>2022.1</version>
 
                 <!-- ... next step ... -->
             </plugin>
@@ -74,7 +54,7 @@ The processors are dependencies of the plugin, and they are expected in the `<pl
         <dependency>
             <groupId>io.openapiprocessor</groupId>
             <artifactId>openapi-processor-spring</artifactId>
-            <version>2021.2</version>
+            <version>2022.1</version>
         </dependency>
         <dependency>
             <groupId>io.openapiprocessor</groupId>
@@ -93,6 +73,7 @@ Then it should know where the processors will find the input OpenAPI yaml files 
 ----
 <plugin>
     <configuration>
+        <id>processor-api</id>
         <apiPath>${project.basedir}/src/api/openapi.yaml</apiPath>
     </configuration>
 
@@ -100,6 +81,7 @@ Then it should know where the processors will find the input OpenAPI yaml files 
 </plugin>
 ----
 
+* `<id/>`, maven wants this. It is not used by the processor.
 * `*<apiPath/>*`, defines the path to the openapi yaml file. This is usually the same for all processors and adding it directly into the plugin `<configuration/>` block sets it for all processors.
 
 Next step is to configure the goals for processing. The plugin has only a single goal `process` that can run any processor. It is configured by an `<execution/>` element to run a specific processor.
@@ -113,7 +95,7 @@ Here is an example to run `openapi-processor-spring` that explains the configura
 <plugin>
     <executions>
         <execution>
-            <id>spring</id> <!--1-->
+            <id>spring-interfaces</id> <!--1-->
             <phase>generate-sources</phase> <!--2-->
 
             <configuration>
@@ -153,7 +135,7 @@ Here is an example to run `openapi-processor-spring` that explains the configura
 
 <2> `*<phase/>*` **phase** (mandatory): openapi-processor-spring generates java code, so the `<phase/>` should be `generate-source`. This tells maven to run the goal before compiling anything.
 
-<3> `*<id/>*` **processor id** (mandatory): this configures the openapi-processor the goal should run. The processor id must match exactly with the name of the processor. The convention is, that the last part of the processors artifact name is the processor id.
+<3> `*<id/>*` **processor id** (mandatory): this configures the openapi-processor the goal should run. The processor id must match exactly with the name of the processor. The convention is, that the last part of the processor artifact name is the processor id.
 +
 If the artifact of a processor is called `openapi-processor-x`, the last part `x` is the id of the processor. For example for `openapi-processor-spring` the id is `spring`, for `openapi-processor-json` the id is `json`.
 
@@ -191,7 +173,7 @@ To run a second processor add another `<execution>` element. Here is an example 
 <plugin>
     <executions>
         <execution>
-            <id>spring</id>
+            <id>spring-interfaces</id>
             <phase>generate-sources</phase>
 
             <configuration>
@@ -201,7 +183,7 @@ To run a second processor add another `<execution>` element. Here is an example 
         </execution>
 
         <execution>
-            <id>json</id>
+            <id>json-resource</id>
             <phase>generate-resources</phase> <!--1-->
 
             <configuration>
@@ -214,6 +196,50 @@ To run a second processor add another `<execution>` element. Here is an example 
 ----
 
 <1> uses `generate-resources` phase for the json output, to consider it as a resource.
+
+== executing the goal
+
+The `<execution>` s created in the previous chapter will automatically run the processor in the given `<phase>` s with commands like `./mvnw compile`.
+
+Running the goal directly with `./mvnw openapi-processor:process` to check the source code generation will not work because there is no configuration without `<phase>`.
+
+=== selecting an execution
+
+This can be solved in two ways:
+
+First, it is possible to the run the goal with an explicit `<execution>` like this:
+
+[source,shell script]
+----
+./mvnw openapi-processor:process@spring-interfaces
+----
+
+where `spring-interfaces` is the `<id>` of the execution.
+
+== adding a default execution
+
+The other solution is to change the `execution` that should run by default to a default `<execution>`. When running `./mvnw openapi-processor:process` from the shell, maven will look for an `<execution>` with the id `<id>default-cli</id>` and if available run it.
+
+[source,xml]
+----
+<plugin>
+    <executions>
+        <execution>
+            <id>default-cli</id> <!--1-->
+            <phase>generate-sources</phase>
+
+            <configuration>
+                <id>spring</id>
+                <!-- ... -->
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+----
+
+<1> using maven's default execution id instead of a user selected id.
+
+With this configuration maven will use it when directly running the `process` goal from the shell, and it will also run it when the given phase is active.
 
 
 == using the processor output
