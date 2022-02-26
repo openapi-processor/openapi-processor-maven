@@ -55,10 +55,6 @@
             <url>https://repo.maven.apache.org/maven2</url>
         </repository>
         -->
-        <repository>
-            <id>bintray.obsolete</id>
-            <url>https://dl.bintray.com/openapi-processor/primary</url>
-        </repository>
     </repositories>
 
     <dependencies>
