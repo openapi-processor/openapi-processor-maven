@@ -19,8 +19,11 @@ package io.openapiprocessor.maven;
 import org.apache.maven.plugin.*;
 import org.apache.maven.plugins.annotations.*;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.project.MavenProject;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -42,38 +45,51 @@ public class ProcessMojo extends AbstractMojo {
     @Parameter(required = false)
     private Options options;
 
+    @Parameter(readonly = true, defaultValue = "${project.basedir}")
+    private File baseDir;
+
     @Override
     public void execute () throws MojoExecutionException {
         String processor = String.format ("openapi-processor-%s", id);
 
         try {
-            getLog().info(String.format ("current processor - %s", processor));
+            getLog().info(String.format ("%10s - %s", "processor", processor));
 
             Map<String, Object> properties = createProperties ();
 
-            File sourceRoot = apiPath.getParentFile ();
-            getLog().info(String.format ("apiPath - %s", sourceRoot));
+            File source = apiPath.getParentFile ();
+            String relativeSource = stripBaseDir (source.getAbsolutePath ());
+            getLog().info(String.format ("%10s - ${project.basedir}/%s", "apiPath", relativeSource));
 
             String targetDir = (String) properties.get (TARGET_DIR);
-            getLog().info(String.format ("targetDir - %s", targetDir));
+            String relativeTargetDir = stripBaseDir (targetDir);
+            getLog().info(String.format ("%10s - ${project.basedir}/%s", "targetDir", relativeTargetDir));
 
             File targetRoot = new File(targetDir);
             UpToDateCheck upToDateCheck = new UpToDateCheck ();
-            boolean upToDate = upToDateCheck.isUpToDate (sourceRoot, targetRoot);
+            boolean upToDate = upToDateCheck.isUpToDate (source, targetRoot);
 
             if (!upToDate) {
+                getLog().info ("");
                 getLog().info( "Changes detected - generating target files!" );
 
                 new ProcessorRunner (id, properties)
                     .run ();
 
             } else {
+                getLog().info ("");
                 getLog().info( "Nothing to process - all generated target files are up to date." );
             }
 
         } catch (Exception e) {
             throw new MojoExecutionException (String.format("Execution failed - %s", processor), e);
         }
+    }
+
+    private String stripBaseDir (String source) {
+        Path base = Paths.get (baseDir.getAbsolutePath ());
+        Path src = Paths.get (source);
+        return base.relativize (src).toString ();
     }
 
     private Map<String, Object> createProperties () throws MojoExecutionException {
