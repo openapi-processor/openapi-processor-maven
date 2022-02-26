@@ -45,7 +45,7 @@ public class ProcessMojo extends AbstractMojo {
     @Parameter(required = false)
     private Options options;
 
-    @Parameter(readonly = true, defaultValue = "${project.basedir}")
+    @Parameter(readonly = true, required = true, defaultValue = "${project.basedir}")
     private File baseDir;
 
     @Override
