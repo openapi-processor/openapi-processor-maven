@@ -11,7 +11,7 @@
 //
 // content
 //
-image:openapi-processor-maven$$@$$1280x200.png[openapi-processor-maven]
+image:openapi-processor-maven-at-1280x200.png[openapi-processor-maven]
 
 // badges
 //link:{oapj-ci}[image:{badge-ci}[]]
