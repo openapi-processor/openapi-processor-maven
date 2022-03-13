@@ -167,7 +167,7 @@ To allow any level of nesting it is possible to create `*<nested/>*` option maps
 
 <6> `*<targetDir/>*` **target directory** (mandatory): the directory the processor should use for its output. By convention a processor should use this key to as the output directory.
 
-<7> the rest of the options are processor specific. See xref:spring::index.doc[openapi-processor-spring].
+<7> the rest of the options are processor specific. See xref:spring::index.adoc[openapi-processor-spring].
 
 <8> `*<goal/>*` **goal** (mandatory): this is the goal maven should run. Since the plugin does only have a single goal the value is always `process`.
 
