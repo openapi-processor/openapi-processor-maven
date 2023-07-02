@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Runs the processor with the classes class loader which will include the dependencies from the
+ * Runs the processor with the classes classloader which will include the dependencies from the
  * openapiProcessor configuration.
  */
 class ProcessorRunner {
