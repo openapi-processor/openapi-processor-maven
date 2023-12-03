@@ -16,15 +16,17 @@
 
 package io.openapiprocessor.maven;
 
-import org.apache.maven.plugin.*;
-import org.apache.maven.plugins.annotations.*;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.project.MavenProject;
+import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * run an openapi-processor.
@@ -40,6 +42,9 @@ public class ProcessMojo extends AbstractMojo {
     private String id;
 
     @Parameter(required = false)
+    private String processorName;
+
+    @Parameter(required = false)
     private File apiPath;
 
     @Parameter(required = false)
@@ -50,7 +55,7 @@ public class ProcessMojo extends AbstractMojo {
 
     @Override
     public void execute () throws MojoExecutionException {
-        String processor = String.format ("openapi-processor-%s", id);
+        String processor = String.format ("openapi-processor-%s", processorName == null ? id : processorName);
 
         try {
             getLog().info(String.format ("%10s - %s", "processor", processor));
