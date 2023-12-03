@@ -11,7 +11,7 @@
 
     <name>openapi-processor Maven Plugin</name>
     <description>maven plugin to run any openapi-processor from maven</description>
-    <url>http://openapiprocessor.io</url>
+    <url>https://openapiprocessor.io</url>
 
     <organization>
         <name>openapi-processor</name>
