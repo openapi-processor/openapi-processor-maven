@@ -24,6 +24,14 @@ class ProcessorRunner {
 
     void run () {
         try {
+            Optional<io.openapiprocessor.api.v2.OpenApiProcessor> processorV2 = ProcessorLoader
+                .findProcessorV2 (processorName, this.getClass ().getClassLoader ());
+
+            if(processorV2.isPresent ()) {
+                processorV2.get ().run (processorProps);
+                return;
+            }
+
             Optional<io.openapiprocessor.api.v1.OpenApiProcessor> processorV1 = ProcessorLoader
                 .findProcessorV1 (processorName, this.getClass ().getClassLoader ());
 

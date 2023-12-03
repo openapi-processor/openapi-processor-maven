@@ -12,6 +12,19 @@ import java.util.*;
  */
 class ProcessorLoader {
 
+    public static Optional<io.openapiprocessor.api.v2.OpenApiProcessor> findProcessorV2(
+        String processorName, ClassLoader classLoader) {
+
+        List<io.openapiprocessor.api.v2.OpenApiProcessor> processors = new ArrayList<> ();
+
+        ServiceLoader.load (io.openapiprocessor.api.v2.OpenApiProcessor.class, classLoader)
+            .forEach (processors::add);
+
+        return processors
+            .stream()
+            .filter (p -> p.getName ().equals (processorName))
+            .findFirst ();
+    }
 
     public static Optional<io.openapiprocessor.api.v1.OpenApiProcessor> findProcessorV1(
         String processorName, ClassLoader classLoader) {
