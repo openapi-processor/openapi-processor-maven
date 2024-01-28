@@ -10,6 +10,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -28,21 +29,18 @@ public class ProcessMojo extends AbstractMojo {
     @Parameter(required = true)
     private String id;
 
-    @Parameter(required = false)
-    private String processorName;
-
-    @Parameter(required = false)
+    @Parameter(required = true)
     private File apiPath;
 
     @Parameter(required = false)
     private Options options;
 
-    @Parameter(readonly = true, required = true, defaultValue = "${project.basedir}")
-    private File baseDir;
+    @Parameter(readonly = true, required = true, defaultValue = "${project}")
+    private MavenProject project;
 
     @Override
     public void execute () throws MojoExecutionException {
-        String processor = String.format ("openapi-processor-%s", processorName == null ? id : processorName);
+        String processor = String.format ("openapi-processor-%s", id);
 
         try {
             getLog().info(String.format ("%10s - %s", "processor", processor));
@@ -53,7 +51,8 @@ public class ProcessMojo extends AbstractMojo {
             String relativeSource = stripBaseDir (source.getAbsolutePath ());
             getLog().info(String.format ("%10s - ${project.basedir}/%s", "apiPath", relativeSource));
 
-            String targetDir = (String) properties.get (TARGET_DIR);
+            String targetDir = (String) properties.computeIfAbsent (TARGET_DIR, k -> project.getBuild().getDirectory() + "/generated-sources/" + id);
+            project.addCompileSourceRoot(targetDir);
             String relativeTargetDir = stripBaseDir (targetDir);
             getLog().info(String.format ("%10s - ${project.basedir}/%s", "targetDir", relativeTargetDir));
 
@@ -79,7 +78,7 @@ public class ProcessMojo extends AbstractMojo {
     }
 
     private String stripBaseDir (String source) {
-        Path base = Paths.get (baseDir.getAbsolutePath ());
+        Path base = Paths.get (project.getBasedir().getAbsolutePath ());
         Path src = Paths.get (source);
         return base.relativize (src).toString ();
     }
