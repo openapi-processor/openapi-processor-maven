@@ -20,6 +20,7 @@ import java.util.Map;
 
 /**
  * run an openapi-processor.
+ * Except for id==json the generated sources are added to the compile source roots.
  */
 @Mojo (name = "process", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class ProcessMojo extends AbstractMojo {
@@ -49,12 +50,16 @@ public class ProcessMojo extends AbstractMojo {
 
             File source = apiPath.getParentFile ();
             String relativeSource = stripBaseDir (source.getAbsolutePath ());
-            getLog().info(String.format ("%10s - ${project.basedir}/%s", "apiPath", relativeSource));
+            getLog().info(String.format ("%10s - ${project.basedir}%s%s", "apiPath", File.pathSeparator, relativeSource));
 
-            String targetDir = (String) properties.computeIfAbsent (TARGET_DIR, k -> project.getBuild().getDirectory() + "/generated-sources/" + id);
-            project.addCompileSourceRoot(targetDir);
+            String targetDir = (String) properties.computeIfAbsent (TARGET_DIR, k -> project.getBuild().getDirectory() + File.pathSeparator + "generated-sources" + File.pathSeparator + id);
+
+            if (!"json".equals(id)) {
+                project.addCompileSourceRoot(targetDir);
+            }
+
             String relativeTargetDir = stripBaseDir (targetDir);
-            getLog().info(String.format ("%10s - ${project.basedir}/%s", "targetDir", relativeTargetDir));
+            getLog().info(String.format ("%10s - ${project.basedir}%s%s", "targetDir", File.pathSeparator, relativeTargetDir));
 
             File targetRoot = new File(targetDir);
             UpToDateCheck upToDateCheck = new UpToDateCheck ();
