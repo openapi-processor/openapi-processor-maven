@@ -10,6 +10,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -28,21 +29,21 @@ public class ProcessMojo extends AbstractMojo {
     @Parameter(required = true)
     private String id;
 
-    @Parameter(required = false)
-    private String processorName;
-
-    @Parameter(required = false)
+    @Parameter(required = true)
     private File apiPath;
 
     @Parameter(required = false)
     private Options options;
 
-    @Parameter(readonly = true, required = true, defaultValue = "${project.basedir}")
-    private File baseDir;
+    @Parameter(required = false, defaultValue = "true")
+    private boolean addSourceRoot;
+
+    @Parameter(readonly = true, required = true, defaultValue = "${project}")
+    private MavenProject project;
 
     @Override
     public void execute () throws MojoExecutionException {
-        String processor = String.format ("openapi-processor-%s", processorName == null ? id : processorName);
+        String processor = String.format ("openapi-processor-%s", id);
 
         try {
             getLog().info(String.format ("%10s - %s", "processor", processor));
@@ -51,11 +52,16 @@ public class ProcessMojo extends AbstractMojo {
 
             File source = apiPath.getParentFile ();
             String relativeSource = stripBaseDir (source.getAbsolutePath ());
-            getLog().info(String.format ("%10s - ${project.basedir}/%s", "apiPath", relativeSource));
+            getLog().info(String.format ("%10s - ${project.basedir}%s%s", "apiPath", File.pathSeparator, relativeSource));
 
-            String targetDir = (String) properties.get (TARGET_DIR);
+            String targetDir = (String) properties.computeIfAbsent (TARGET_DIR, k -> project.getBuild().getDirectory() + File.pathSeparator + "generated-sources" + File.pathSeparator + id);
+
+            if (addSourceRoot) {
+                project.addCompileSourceRoot(targetDir);
+            }
+
             String relativeTargetDir = stripBaseDir (targetDir);
-            getLog().info(String.format ("%10s - ${project.basedir}/%s", "targetDir", relativeTargetDir));
+            getLog().info(String.format ("%10s - ${project.basedir}%s%s", "targetDir", File.pathSeparator, relativeTargetDir));
 
             File targetRoot = new File(targetDir);
             UpToDateCheck upToDateCheck = new UpToDateCheck ();
@@ -79,7 +85,7 @@ public class ProcessMojo extends AbstractMojo {
     }
 
     private String stripBaseDir (String source) {
-        Path base = Paths.get (baseDir.getAbsolutePath ());
+        Path base = Paths.get (project.getBasedir().getAbsolutePath ());
         Path src = Paths.get (source);
         return base.relativize (src).toString ();
     }
