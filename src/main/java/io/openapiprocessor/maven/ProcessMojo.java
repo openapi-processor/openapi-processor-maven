@@ -20,7 +20,6 @@ import java.util.Map;
 
 /**
  * run an openapi-processor.
- * Except for id==json the generated sources are added to the compile source roots.
  */
 @Mojo (name = "process", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class ProcessMojo extends AbstractMojo {
@@ -35,6 +34,9 @@ public class ProcessMojo extends AbstractMojo {
 
     @Parameter(required = false)
     private Options options;
+
+    @Parameter(required = false, defaultValue = "true")
+    private boolean addSourceRoot;
 
     @Parameter(readonly = true, required = true, defaultValue = "${project}")
     private MavenProject project;
@@ -54,7 +56,7 @@ public class ProcessMojo extends AbstractMojo {
 
             String targetDir = (String) properties.computeIfAbsent (TARGET_DIR, k -> project.getBuild().getDirectory() + File.pathSeparator + "generated-sources" + File.pathSeparator + id);
 
-            if (!"json".equals(id)) {
+            if (addSourceRoot) {
                 project.addCompileSourceRoot(targetDir);
             }
 
