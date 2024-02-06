@@ -52,7 +52,7 @@ public class ProcessMojo extends AbstractMojo {
 
             File source = apiPath.getParentFile ();
             String relativeSource = stripBaseDir (source.getAbsolutePath ());
-            getLog().info(String.format ("%10s - ${project.basedir}%s%s", "apiPath", File.pathSeparator, relativeSource));
+            getLog().info(String.format ("%10s - ${project.basedir}%s%s", "apiPath", File.separator, relativeSource));
 
             String targetDir = (String) properties.computeIfAbsent (TARGET_DIR, k -> project.getBuild().getDirectory() + File.separator + "generated-sources" + File.separator + id);
 
@@ -61,7 +61,7 @@ public class ProcessMojo extends AbstractMojo {
             }
 
             String relativeTargetDir = stripBaseDir (targetDir);
-            getLog().info(String.format ("%10s - ${project.basedir}%s%s", "targetDir", File.pathSeparator, relativeTargetDir));
+            getLog().info(String.format ("%10s - ${project.basedir}%s%s", "targetDir", File.separator, relativeTargetDir));
 
             File targetRoot = new File(targetDir);
             UpToDateCheck upToDateCheck = new UpToDateCheck ();
