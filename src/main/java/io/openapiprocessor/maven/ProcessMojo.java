@@ -54,7 +54,7 @@ public class ProcessMojo extends AbstractMojo {
             String relativeSource = stripBaseDir (source.getAbsolutePath ());
             getLog().info(String.format ("%10s - ${project.basedir}%s%s", "apiPath", File.pathSeparator, relativeSource));
 
-            String targetDir = (String) properties.computeIfAbsent (TARGET_DIR, k -> project.getBuild().getDirectory() + File.pathSeparator + "generated-sources" + File.pathSeparator + id);
+            String targetDir = (String) properties.computeIfAbsent (TARGET_DIR, k -> project.getBuild().getDirectory() + File.separator + "generated-sources" + File.separator + id);
 
             if (addSourceRoot) {
                 project.addCompileSourceRoot(targetDir);
