@@ -107,4 +107,4 @@ jobs:
         PUBLISH_USER: ${{ secrets.PUBLISH_USER }}
         PUBLISH_KEY: ${{ secrets.PUBLISH_KEY }}
       run: |
-        ./mvnw  --no-transfer-progress deploy -P snapshot
+        ./mvnw  --no-transfer-progress deploy
