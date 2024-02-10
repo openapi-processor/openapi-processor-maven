@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       BUILD_VERSION: ${{ env.BUILD_VERSION }}
+      MAVEN_HOME_WRAPPER: ${{ env.MAVEN_HOME_WRAPPER }}
 
     steps:
       - name: Set up Homebrew
@@ -39,11 +40,18 @@ jobs:
           echo "BUILD_VERSION=${version#projectVersion=}" >> $GITHUB_ENV
           cat $GITHUB_ENV
 
+      - name: find maven home
+        run: |
+          maven_home_wrapper=`./mvnw --version | sed -n '2p' | dasel -r yaml 'Maven home'`
+          echo "MAVEN_HOME_WRAPPER=${maven_home_wrapper}" >> $GITHUB_ENV
+          cat $GITHUB_ENV
+
       - name: actor
         run: echo ${{ github.actor }} ${{ github.actor == 'hauner' }}
 
   test:
     name: test
+    needs: [version]
 
     runs-on: ${{ matrix.os }}
     strategy:
@@ -65,7 +73,7 @@ jobs:
 
     - name: run tests
       run: |
-        ./mvnw verify
+        ./mvnw --no-transfer-progress verify -Dmaven_home=${{ needs.version.outputs.MAVEN_HOME_WRAPPER }}"
 
     - name: archive test results
       uses: actions/upload-artifact@v4
@@ -99,4 +107,4 @@ jobs:
         PUBLISH_USER: ${{ secrets.PUBLISH_USER }}
         PUBLISH_KEY: ${{ secrets.PUBLISH_KEY }}
       run: |
-        ./mvnw deploy -P snapshot
+        ./mvnw  --no-transfer-progress deploy -P snapshot
