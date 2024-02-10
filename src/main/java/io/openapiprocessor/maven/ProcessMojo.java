@@ -7,6 +7,7 @@ package io.openapiprocessor.maven;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -43,42 +44,43 @@ public class ProcessMojo extends AbstractMojo {
 
     @Override
     public void execute () throws MojoExecutionException {
+        Log log = getLog();
         String processor = String.format ("openapi-processor-%s", id);
 
         try {
-            getLog().info(String.format ("%10s - %s", "processor", processor));
+            log.info(String.format ("%10s - %s", "processor", processor));
 
             Map<String, Object> properties = createProperties ();
 
-            File source = apiPath.getParentFile ();
+            File source = apiPath.getAbsoluteFile();
             String relativeSource = stripBaseDir (source.getAbsolutePath ());
-            getLog().info(String.format ("%10s - ${project.basedir}%s%s", "apiPath", File.separator, relativeSource));
+            log.info(String.format ("%10s - %s", "apiPath", joinDirs("${project.basedir}", relativeSource)));
 
-            String targetDir = (String) properties.computeIfAbsent (TARGET_DIR, k -> project.getBuild().getDirectory() + File.separator + "generated-sources" + File.separator + id);
+            String targetDir = (String) properties.computeIfAbsent (TARGET_DIR, k -> joinDirs(
+                    project.getBuild().getDirectory(),
+                    "generated-sources",
+                    id));
 
             if (addSourceRoot) {
                 project.addCompileSourceRoot(targetDir);
             }
 
             String relativeTargetDir = stripBaseDir (targetDir);
-            getLog().info(String.format ("%10s - ${project.basedir}%s%s", "targetDir", File.separator, relativeTargetDir));
+            log.info(String.format ("%10s - %s", "targetDir", joinDirs("${project.basedir}", relativeTargetDir)));
 
             File targetRoot = new File(targetDir);
             UpToDateCheck upToDateCheck = new UpToDateCheck ();
-            boolean upToDate = upToDateCheck.isUpToDate (source, targetRoot);
+            boolean upToDate = upToDateCheck.isUpToDate (source.getParentFile(), targetRoot);
 
+            log.info("");
             if (!upToDate) {
-                getLog().info ("");
-                getLog().info( "Changes detected - generating target files!" );
+                log.info("Changes detected - generating target files!");
 
-                new ProcessorRunner (id, properties)
-                    .run ();
+                new ProcessorRunner(id, properties).run();
 
             } else {
-                getLog().info ("");
-                getLog().info( "Nothing to process - all generated target files are up to date." );
+                log.info("Nothing to process - all generated target files are up to date.");
             }
-
         } catch (Exception e) {
             throw new MojoExecutionException (String.format("Execution failed - %s", processor), e);
         }
@@ -88,6 +90,10 @@ public class ProcessMojo extends AbstractMojo {
         Path base = Paths.get (project.getBasedir().getAbsolutePath ());
         Path src = Paths.get (source);
         return base.relativize (src).toString ();
+    }
+
+    private String joinDirs (CharSequence... directories) {
+        return String.join(File.separator, directories);
     }
 
     private Map<String, Object> createProperties () throws MojoExecutionException {
@@ -127,14 +133,8 @@ public class ProcessMojo extends AbstractMojo {
     }
 
     // copy common api path to openapi-processor props if not set
-    private void setApiPath (Map<String, Object> properties) throws MojoExecutionException {
+    private void setApiPath (Map<String, Object> properties) {
         if (!properties.containsKey (API_PATH)) {
-            if (apiPath == null) {
-                throw new MojoExecutionException (this,
-                    "'common <apiPath>' or '" + id + " <apiPath>' not set!",
-                    "'common <apiPath>' or '" + id + " <apiPath>' not set!");
-            }
-
             properties.put (API_PATH, apiPath);
         } else {
             apiPath = new File((String) properties.get (API_PATH));
