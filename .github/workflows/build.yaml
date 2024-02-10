@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       BUILD_VERSION: ${{ env.BUILD_VERSION }}
-      MAVEN_HOME_WRAPPER: ${{ env.MAVEN_HOME_WRAPPER }}
+      MAVEN_HOME: ${{ env.MAVEN_HOME }}
 
     steps:
       - name: Set up Homebrew
@@ -43,7 +43,7 @@ jobs:
       - name: find maven home
         run: |
           maven_home_wrapper=`./mvnw --version | sed -n '2p' | dasel -r yaml 'Maven home'`
-          echo "MAVEN_HOME_WRAPPER=${maven_home_wrapper}" >> $GITHUB_ENV
+          echo "MAVEN_HOME=${maven_home_wrapper}" >> $GITHUB_ENV
           cat $GITHUB_ENV
 
       - name: actor
@@ -73,7 +73,7 @@ jobs:
 
     - name: run tests
       run: |
-        ./mvnw --no-transfer-progress verify -Dmaven_home=${{ needs.version.outputs.MAVEN_HOME_WRAPPER }}"
+        ./mvnw --no-transfer-progress verify -Dmaven.home=${{ needs.version.outputs.MAVEN_HOME}}"
 
     - name: archive test results
       uses: actions/upload-artifact@v4
