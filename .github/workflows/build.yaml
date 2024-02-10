@@ -42,8 +42,8 @@ jobs:
 
       - name: find maven home
         run: |
-          maven_home_wrapper=`./mvnw --version | sed -n '2p' | dasel -r yaml 'Maven home'`
-          echo "MAVEN_HOME=${maven_home_wrapper}" >> $GITHUB_ENV
+          maven_home=`./mvnw --version | sed -n '2p' | dasel -r yaml 'Maven home'`
+          echo "MAVEN_HOME=${maven_home}" >> $GITHUB_ENV
           cat $GITHUB_ENV
 
       - name: actor
@@ -73,14 +73,14 @@ jobs:
 
     - name: run tests
       run: |
-        ./mvnw --no-transfer-progress verify -Dmaven.home=${{ needs.version.outputs.MAVEN_HOME}}
+        ./mvnw --no-transfer-progress verify -Dmaven.home=${{ needs.version.outputs.MAVEN_HOME }}
 
     - name: archive test results
       uses: actions/upload-artifact@v4
       if: always()
       with:
         name: test-results-${{ matrix.os }}
-        path: '*/target'
+        path: 'target/**'
 
   publish:
     if: contains(needs.version.outputs.BUILD_VERSION, 'SNAPSHOT') && github.actor == 'hauner'
