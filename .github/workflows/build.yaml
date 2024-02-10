@@ -73,7 +73,7 @@ jobs:
 
     - name: run tests
       run: |
-        ./mvnw --no-transfer-progress verify -Dmaven.home=${{ needs.version.outputs.MAVEN_HOME}}"
+        ./mvnw --no-transfer-progress verify -Dmaven.home=${{ needs.version.outputs.MAVEN_HOME}}
 
     - name: archive test results
       uses: actions/upload-artifact@v4
