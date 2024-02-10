@@ -103,7 +103,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SIGN_KEY: ${{ secrets.SIGN_KEY }}
-        SIGN_PWD: ${{ secrets.SIGN_PWD }}
+        SIGN_KEY_PASS: ${{ secrets.SIGN_PWD }}
         PUBLISH_USER: ${{ secrets.PUBLISH_USER }}
         PUBLISH_KEY: ${{ secrets.PUBLISH_KEY }}
       run: |
