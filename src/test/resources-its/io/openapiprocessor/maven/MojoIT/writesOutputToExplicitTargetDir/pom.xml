@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>io.openapiprocessor.maven</groupId>
+    <artifactId>test-1</artifactId>
+    <version>1</version>
+    <name>test-1</name>
+    <description>test-1</description>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>openapi-processor-snapshots</id>
+            <name>openapi-processor-snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <properties>
+        <java.version>11</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
+    <dependencies>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>io.openapiprocessor</groupId>
+                <artifactId>openapi-processor-maven-plugin</artifactId>
+                <version>@project.version@</version>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>io.openapiprocessor</groupId>
+                        <artifactId>openapi-processor-spring</artifactId>
+                        <version>2024.1-SNAPSHOT</version>
+                    </dependency>
+                </dependencies>
+
+                <configuration>
+                    <id>processor-api</id>
+                    <apiPath>${project.basedir}/src/api/openapi.yaml</apiPath>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <id>default-cli</id>
+                        <phase>generate-sources</phase>
+
+                        <configuration>
+                            <id>spring</id>
+
+                            <options>
+                                <values>
+                                    <targetDir>${project.basedir}/target/generated-sources/expected-target-dir</targetDir>
+                                    <mapping>${project.basedir}/src/api/mapping.yaml</mapping>
+                                </values>
+                            </options>
+                        </configuration>
+
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+            </plugin>
+        </plugins>
+    </build>
+</project>
