@@ -107,4 +107,4 @@ jobs:
         PUBLISH_USER: ${{ secrets.PUBLISH_USER }}
         PUBLISH_KEY: ${{ secrets.PUBLISH_KEY }}
       run: |
-        ./mvnw  --no-transfer-progress deploy
+        ./mvnw  --no-transfer-progress deploy -Dusername=${PUBLISH_USER} -Dpassword=${PUBLISH_KEY} 
