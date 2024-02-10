@@ -63,9 +63,6 @@ jobs:
         java-version: 11
         cache: maven
 
-    - name: set up gradle
-      uses: gradle/gradle-build-action@v3.0.0
-
     - name: run tests
       run: |
         ./mvnw verify
