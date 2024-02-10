@@ -15,7 +15,7 @@ on:
 jobs:
 
   version:
-    name: check version
+    name: prepare build
     runs-on: ubuntu-latest
     outputs:
       BUILD_VERSION: ${{ env.BUILD_VERSION }}
