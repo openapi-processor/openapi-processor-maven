@@ -98,6 +98,8 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: 11
+        server-username: PUBLISH_USER
+        server-password: PUBLISH_KEY
 
     - name: publish snapshot
       env:
@@ -107,4 +109,4 @@ jobs:
         PUBLISH_USER: ${{ secrets.PUBLISH_USER }}
         PUBLISH_KEY: ${{ secrets.PUBLISH_KEY }}
       run: |
-        ./mvnw  --no-transfer-progress deploy -Dusername=${PUBLISH_USER} -Dpassword=${PUBLISH_KEY} 
+        ./mvnw  --no-transfer-progress deploy
