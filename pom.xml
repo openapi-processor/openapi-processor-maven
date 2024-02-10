@@ -47,6 +47,10 @@
         <maven.compiler.release>8</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!-- integration testing -->
+        <maven.version>3.9.6</maven.version>
+        <maven.home>/Users/hauner/Development/openapi/maven/apache-maven-3.9.6</maven.home>
     </properties>
 
     <repositories>
@@ -90,19 +94,37 @@
             <artifactId>openapi-processor-api</artifactId>
             <version>2023.1</version>
         </dependency>
+        <dependency>
+           <groupId>org.junit.jupiter</groupId>
+           <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.10.0</version>
+           <scope>test</scope>
+         </dependency>
+         <dependency>
+           <groupId>com.soebes.itf.jupiter.extension</groupId>
+           <artifactId>itf-jupiter-extension</artifactId>
+           <version>0.13.1</version>
+           <scope>test</scope>
+         </dependency>
+         <dependency>
+          <groupId>com.soebes.itf.jupiter.extension</groupId>
+          <artifactId>itf-assertj</artifactId>
+          <version>0.13.1</version>
+          <scope>test</scope>
+         </dependency>
     </dependencies>
 
     <build>
         <plugins>
             <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-compiler-plugin</artifactId>
-              <version>3.11.0</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
             </plugin>
             <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-resources-plugin</artifactId>
-              <version>3.3.1</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -110,9 +132,9 @@
                 <version>3.10.2</version>
             </plugin>
             <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-deploy-plugin</artifactId>
-              <version>3.1.1</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>3.1.1</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -154,6 +176,43 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.soebes.itf.jupiter.extension</groupId>
+                <artifactId>itf-maven-plugin</artifactId>
+                <version>0.13.1</version>
+                <executions>
+                    <execution>
+                        <id>installing</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>install</goal>
+                            <goal>resources-its</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.1.2</version>
+              <configuration>
+                <!--
+                 ! currently needed to run integration tests.
+                -->
+                <systemPropertyVariables>
+                  <maven.version>${maven.version}</maven.version>
+                  <maven.home>${maven.home}</maven.home>
+                </systemPropertyVariables>
+              </configuration>
+              <executions>
+                <execution>
+                  <goals>
+                    <goal>integration-test</goal>
+                    <goal>verify</goal>
+                  </goals>
+                </execution>
+              </executions>
             </plugin>
         </plugins>
     </build>

@@ -1,0 +1,7 @@
+openapi-processor-mapping: v6
+
+options:
+  package-name: io.openapiprocessor.openapi
+  javadoc: true
+  format-code: true
+
