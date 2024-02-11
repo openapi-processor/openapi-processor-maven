@@ -28,7 +28,7 @@ jobs:
         env:
           PUBLISH_USER: ${{ secrets.PUBLISH_USER }}
           PUBLISH_KEY: ${{ secrets.PUBLISH_KEY }}
-          SIGN_KEY: ${{ secrets.SIGN_KEY }}
+          SIGN_KEY: ${{ SIGN_KEY_ORG }}
           SIGN_KEY_PASS: ${{ secrets.SIGN_PWD }}
         run: |
-         ./mvnw deploy
+         ./mvnw --no-transfer-progress deploy

@@ -1,9 +1,8 @@
 :badge-license: https://img.shields.io/badge/License-Apache%202.0-blue.svg?labelColor=313A42
-:badge-ci: https://github.com/openapi-processor/openapi-processor-maven/workflows/ci/badge.svg
-:workflow-ci: https://github.com/openapi-processor/openapi-processor-maven/actions?query=workflow%3Aci
+:badge-ci: https://github.com/openapi-processor/openapi-processor-maven/workflows/build/badge.svg
+:oap-ci: https://github.com/openapi-processor/openapi-processor-maven/actions?query=workflow%3Abuild
 
 :oap-api: https://github.com/openapi-processor/openapi-processor-api
-:oap-ci: https://github.com/openapi-processor/openapi-processor-maven/actions?query=workflow%3Aci
 :oap-docs: https://docs.openapiprocessor.io/maven
 :oap-license: https://github.com/openapi-processor/openapi-processor-maven/blob/master/LICENSE
 
@@ -11,7 +10,7 @@
 :badge-central: https://img.shields.io/maven-central/v/io.openapiprocessor/openapi-processor-maven-plugin?label=Maven%20Central
 
 // badges
-//link:{oaps-ci}[image:{badge-ci}[]]
+link:{oap-ci}[image:{badge-ci}[]]
 //link:{oaps-license}[image:{badge-license}[]]
 link:{oap-central}[image:{badge-central}[]]
 
