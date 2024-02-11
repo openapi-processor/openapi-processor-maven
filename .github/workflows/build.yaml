@@ -1,0 +1,113 @@
+name: build
+
+on:
+  push:
+    branches:
+      - '**'
+    paths-ignore:
+      - 'LICENSE'
+      - 'README.adoc'
+      - 'docs/**'
+    tags-ignore:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+
+  version:
+    name: prepare build
+    runs-on: ubuntu-latest
+    outputs:
+      BUILD_VERSION: ${{ env.BUILD_VERSION }}
+      MAVEN_HOME: ${{ env.MAVEN_HOME }}
+
+    steps:
+      - name: Set up Homebrew
+        id: set-up-homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: install dasel
+        run: |
+          brew install dasel
+          cat $GITHUB_ENV
+
+      - name: extract version
+        run: |
+          version=`dasel -r xml -f pom.xml project.version`
+          echo "BUILD_VERSION=${version#projectVersion=}" >> $GITHUB_ENV
+          cat $GITHUB_ENV
+
+      - name: find maven home
+        run: |
+          maven_home=`./mvnw --version | sed -n '2p' | dasel -r yaml 'Maven home'`
+          echo "MAVEN_HOME=${maven_home}" >> $GITHUB_ENV
+          cat $GITHUB_ENV
+
+      - name: actor
+        run: echo ${{ github.actor }} ${{ github.actor == 'hauner' }}
+
+  test:
+    name: test
+    needs: [version]
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4
+      with:
+        submodules: true
+
+    - name: set up jdk
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: 11
+        cache: maven
+
+    - name: run tests
+      run: |
+        ./mvnw --no-transfer-progress verify -D"maven.home=${{ needs.version.outputs.MAVEN_HOME }}"
+
+    - name: archive test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results-${{ matrix.os }}
+        path: 'target/**'
+
+  publish:
+    if: contains(needs.version.outputs.BUILD_VERSION, 'SNAPSHOT') && github.actor == 'hauner'
+    needs: [version, test]
+    name: publish snapshot
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4
+
+    - name: set up jdk
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: 11
+        server-id: oap-snapshots
+        server-username: PUBLISH_USER
+        server-password: PUBLISH_KEY
+
+    - name: publish snapshot
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SIGN_KEY: ${{ secrets.SIGN_KEY_ORG }}
+        SIGN_KEY_PASS: ${{ secrets.SIGN_PWD }}
+        PUBLISH_USER: ${{ secrets.PUBLISH_USER }}
+        PUBLISH_KEY: ${{ secrets.PUBLISH_KEY }}
+      run: |
+        ./mvnw  --no-transfer-progress deploy

@@ -6,7 +6,7 @@
 
     <groupId>io.openapiprocessor</groupId>
     <artifactId>openapi-processor-maven-plugin</artifactId>
-    <version>2024.1</version>
+    <version>2024.1.1</version>
     <packaging>maven-plugin</packaging>
 
     <name>openapi-processor Maven Plugin</name>
@@ -50,7 +50,7 @@
 
         <!-- integration testing -->
         <maven.version>3.9.6</maven.version>
-        <maven.home>/Users/hauner/Development/openapi/maven/apache-maven-3.9.6</maven.home>
+        <maven.home>SET_ME</maven.home>
     </properties>
 
     <repositories>
