@@ -1,0 +1,34 @@
+name: release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+
+  publish:
+    name: publish release
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: set up jdk
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 11
+          server-id: oap-releases
+          server-username: PUBLISH_USER
+          server-password: PUBLISH_KEY
+
+      - name: publish release
+        env:
+          PUBLISH_USER: ${{ secrets.PUBLISH_USER }}
+          PUBLISH_KEY: ${{ secrets.PUBLISH_KEY }}
+          SIGN_KEY: ${{ secrets.SIGN_KEY }}
+          SIGN_KEY_PASS: ${{ secrets.SIGN_PWD }}
+        run: |
+         ./mvnw deploy
