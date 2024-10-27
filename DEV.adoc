@@ -1,0 +1,4 @@
+
+== integration tests
+
+    ./mvnw --no-transfer-progress verify -D"maven.home=<...>/maven/apache-maven-3.9.6"
