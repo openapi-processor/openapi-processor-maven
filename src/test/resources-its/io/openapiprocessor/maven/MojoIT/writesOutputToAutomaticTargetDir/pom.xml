@@ -34,10 +34,16 @@
                 <version>@project.version@</version>
 
                 <dependencies>
+<!--                    <dependency>-->
+<!--                        <groupId>io.openapiprocessor</groupId>-->
+<!--                        <artifactId>openapi-processor-api</artifactId>-->
+<!--                        <version>2024.1</version>-->
+<!--                    </dependency>-->
+
                     <dependency>
                         <groupId>io.openapiprocessor</groupId>
                         <artifactId>openapi-processor-spring</artifactId>
-                        <version>2024.1-SNAPSHOT</version>
+                        <version>2024.6-SNAPSHOT</version>
                     </dependency>
                 </dependencies>
 
