@@ -36,13 +36,13 @@ jobs:
 
       - name: extract version
         run: |
-          version=`dasel -r xml -f pom.xml project.version`
+          version=`cat pom.xml | dasel -i xml 'project.version'`
           echo "BUILD_VERSION=${version#projectVersion=}" >> $GITHUB_ENV
           cat $GITHUB_ENV
 
       - name: find maven home
         run: |
-          maven_home=`./mvnw --version | sed -n '2p' | dasel -r yaml 'Maven home'`
+          maven_home=`./mvnw --version | sed -n '2p' | dasel -i yaml 'Maven home'`
           echo "MAVEN_HOME=${maven_home}" >> $GITHUB_ENV
           cat $GITHUB_ENV
 
