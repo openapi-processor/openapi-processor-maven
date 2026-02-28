@@ -29,14 +29,14 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: install dasel
-        run: |
-          brew install dasel
-          cat $GITHUB_ENV
+#      - name: install dasel
+#        run: |
+#          brew install dasel
+#          cat $GITHUB_ENV
 
       - name: extract version
         run: |
-          version=`cat pom.xml | dasel -i xml 'project.version'`
+          version=`yq  -p xml  -oy e '.project.version' pom.xml`
           echo "BUILD_VERSION=${version#projectVersion=}" >> $GITHUB_ENV
           cat $GITHUB_ENV
 
