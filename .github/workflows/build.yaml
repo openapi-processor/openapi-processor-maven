@@ -29,20 +29,15 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-#      - name: install dasel
-#        run: |
-#          brew install dasel
-#          cat $GITHUB_ENV
-
       - name: extract version
         run: |
-          version=`yq  -p xml  -oy e '.project.version' pom.xml`
+          version=`yq  -p xml -oy e '.project.version' pom.xml`
           echo "BUILD_VERSION=${version#projectVersion=}" >> $GITHUB_ENV
           cat $GITHUB_ENV
 
       - name: find maven home
         run: |
-          maven_home=`./mvnw --version | sed -n '2p' | dasel -i yaml 'Maven home'`
+          maven_home=`./mvnw --version | sed -n '2p' | yq e '.["Maven home"]'`
           echo "MAVEN_HOME=${maven_home}" >> $GITHUB_ENV
           cat $GITHUB_ENV
 
