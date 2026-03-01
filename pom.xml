@@ -217,7 +217,7 @@
               <extensions>true</extensions>
               <configuration>
                 <publishingServerId>oap-releases</publishingServerId>
-                <deploymentName>openapi-processor-maven</deploymentName>
+                <deploymentName>maven-${project.version}.zip</deploymentName>
               </configuration>
             </plugin>
         </plugins>
