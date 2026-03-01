@@ -49,7 +49,8 @@ public class ProcessMojo extends AbstractMojo {
     @Override
     public void execute () throws MojoExecutionException {
         Log log = getLog();
-        String processor = String.format ("openapi-processor-%s", getProcessor());
+        String processorId = getProcessor();
+        String processor = String.format ("openapi-processor-%s", processorId);
 
         try {
             log.info(String.format ("%10s - %s", "processor", processor));
@@ -81,7 +82,7 @@ public class ProcessMojo extends AbstractMojo {
             if (!upToDate) {
                 log.info("Changes detected - generating target files!");
 
-                new ProcessorRunner(log, id, properties).run();
+                new ProcessorRunner(log, processorId, properties).run();
 
             } else {
                 log.info("Nothing to process - all generated target files are up to date.");
