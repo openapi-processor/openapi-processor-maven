@@ -20,7 +20,7 @@ link:{oap-central}[image:{badge-central}[]]
 
 a maven plugin based on the link:{oap-api}[openapi-processor-api] to handle any openapi-processor without an explicit dependency on the processor.
 
-NOTE: unfortunately it is necessary to configure a few xref:oap::jdk.adoc[additional jvm parameter] to run the processor with JDK 16+
+NOTE: unfortunately, it may be necessary to configure a few xref:oap::jdk.adoc[additional jvm parameters] to run the processor with *enabled* code formatter on JDK 16+.
 
 == plugin configuration
 
@@ -35,8 +35,8 @@ The first step of the configuration is to add the plugin, and the processor(s) t
             <plugin>
                 <groupId>io.openapiprocessor</groupId>
                 <artifactId>openapi-processor-maven-plugin</artifactId>
-                <!-- update to the latest version, see maven central badge at top -->
-                <version>2024.1</version>
+                <!-- to update to the latest version, see maven central badge at top -->
+                <version>2026.1</version>
 
                 <!-- ... next step ... -->
             </plugin>
@@ -54,12 +54,12 @@ The processors are dependencies of the plugin, and they are expected in the `<pl
         <dependency>
             <groupId>io.openapiprocessor</groupId>
             <artifactId>openapi-processor-spring</artifactId>
-            <version>2023.6.1</version>
+            <version>2026.1</version>
         </dependency>
         <dependency>
             <groupId>io.openapiprocessor</groupId>
             <artifactId>openapi-processor-json</artifactId>
-            <version>2023.6.1</version>
+            <version>2026.1</version>
         </dependency>
     </dependencies>
 
@@ -84,7 +84,7 @@ Then it should know where the processors will find the input OpenAPI yaml files 
 * `<id/>`, maven wants this. It is not used by the processor.
 * `*<apiPath/>*`, defines the path to the openapi yaml file. This is usually the same for all processors and adding it directly into the plugin `<configuration/>` block sets it for all processors.
 
-Next step is to configure the goals for processing. The plugin has only a single goal `process` that can run any processor. It is configured by an `<execution/>` element to run a specific processor.
+The next step is to configure the goals for processing. The plugin has only a single goal `process` that can run any processor. It is configured by an `<execution/>` element to run a specific processor.
 
 If maven should run multiple processors, multiple `<execution/>` s are needed.
 
@@ -100,6 +100,7 @@ Here is an example to run `openapi-processor-spring` that explains the configura
 
             <configuration>
                 <id>spring</id> <!--3-->
+                <processor>spring</processor> <!--3-->
 
                 <!-- true is default -->
                 <addSourceRoot>true</addSourceRoot> <!--9-->
@@ -112,7 +113,7 @@ Here is an example to run `openapi-processor-spring` that explains the configura
                     <values>
                         <targetDir>${project.basedir}/target/generated-sources/openapi</targetDir> <!--6-->
                         <mapping>${project.basedir}/src/api/mapping.yaml</mapping> <!--7-->
-                        <parser>INTERNAL</parser>
+                        <parser>INTERNAL</parser> <!-- default -->
                         <showWarnings>true</showWarnings>
                     </values>
 
@@ -136,17 +137,19 @@ Here is an example to run `openapi-processor-spring` that explains the configura
 
 <1> `*<id/>*`: **execution id** of the goal (choose your id). It is necessary to configure multiple executions.
 
-<2> `*<phase/>*` **phase** (mandatory): openapi-processor-spring generates java code, so the `<phase/>` should be `generate-source`. This tells maven to run the goal before compiling anything.
+<2> `*<phase/>*` **phase** (mandatory): openapi-processor-spring generates Java code, so the `<phase/>` should be `generate-source`. This tells maven to run the goal before compiling anything.
 
-<3> `*<id/>*` **processor id** (mandatory): this configures the openapi-processor the goal should run. The processor id must match exactly with the name of the processor. The convention is, that the last part of the processor artifact name is the processor id.
+<3> `*<id/>*` **processor id** (mandatory): this configures the openapi-processor the goal should run. The processor id must match exactly with the name of the processor unless the `<processor/>` is used. In this case `<id/>` is used as a subfolder of an automatically created `<targetDir/>`.
 +
-If the artifact of a processor is called `openapi-processor-x`, the last part `x` is the id of the processor. For example for `openapi-processor-spring` the id is `spring`, for `openapi-processor-json` the id is `json`.
-
-<4> `*<apiPath/>*` (optional): the path to the open api yaml file. If set inside an `<execution>` `<configuration/>` it overrides the parent `apiPath` set in the `<plugin>` `<configuration/>`.
-
-<5> `*<options/>*` (mandatory): **processor specific options**, the configuration of a single processor can have any number of additional parameters defined by the processor (all options will be passed as a map to the processor with the option name as the key). The nested `*<values/>*` element defines that map.
+`*<processor/>*` **processor id** (optional): this is an alternative configuration of the openapi-processor a goal should run. It is necessary to process multiple OpenAPI files with the same processor. See below for more on this.
 +
-To allow any level of nesting it is possible to create `*<nested/>*` option maps, i.e. `*<nested/>*` can contain another `*<nested/>*` element and so on. In the configuration above the plugin would pass the following map to the processor:
+The convention is that the last part of the processor artifact name is the processor id. If the artifact of a processor is called `openapi-processor-x`, the last part `x` is the id of the processor. For example, for `openapi-processor-spring` the id is `spring`, for `openapi-processor-json` the id is `json`.
+
+<4> `*<apiPath/>*` (optional): the path to the open api YAML file. If set inside an `<execution>` `<configuration/>` it overrides the parent `apiPath` set in the `<plugin>` `<configuration/>`.
+
+<5> `*<options/>*` (mandatory): **processor-specific options**, the configuration of a single processor can have any number of additional parameters defined by the processor (all options will be passed as a map to the processor with the option name as the key). The nested `*<values/>*` element defines that map.
++
+To allow any level of nesting, it is possible to create `*<nested/>*` option maps, i.e. `*<nested/>*` can contain another `*<nested/>*` element and so on. In the configuration above, the plugin would pass the following map to the processor:
 +
 [source,json,title=json notation]
 ----
@@ -161,17 +164,26 @@ To allow any level of nesting it is possible to create `*<nested/>*` option maps
 }
 ----
 
-<6> `*<targetDir/>*` **target directory** (mandatory): the directory the processor should use for its output. By convention a processor should use this key to as the output directory.
+<6> `*<targetDir/>*` **target directory** (optional): the directory the processor should use for its output. By convention, a processor uses this key as the output directory.
++
+If this is not given, the plugin will automatically select the target dir as:
++
+[source,xml]
+----
+<targetDir>${project.basedir}/target/generated-sources/{processor id}</targetDir>
+----
++
+where `{processor id}` is `<processor/>` if given, or `<id/>` if `<processor/>` is not given.
 
-<7> the rest of the options are processor specific. See xref:spring::index.adoc[openapi-processor-spring].
+<7> the rest of the options are processor-specific. See xref:spring::index.adoc[openapi-processor-spring].
 
 <8> `*<goal/>*` **goal** (mandatory): this is the goal maven should run. Since the plugin does only have a single goal the value is always `process`.
 
-<9> `*<addSourceRoot/>*` **addSourceRoot* (optional): this defaults to `true` and automatically adds the `targetDir` as compile source root folder. It can be disabled by setting it to  `false`.
+<9> `*<addSourceRoot/>*` **addSourceRoot** (optional): this defaults to `true` and automatically adds the `targetDir` as compile source root folder. It can be disabled by setting it to  `false`.
 
-=== multiple processors
+=== multiple different processors
 
-To run a second processor add another `<execution>` element. Here is an example that configures xref:spring:ROOT:index.adoc[openapi-processor-spring] and xref:json:ROOT:index.adoc[openapi-processor-json]:
+To run a second processor, add another `<execution>` element. Here is an example that configures xref:spring:ROOT:index.adoc[openapi-processor-spring] and xref:json:ROOT:index.adoc[openapi-processor-json]:
 
 
 [source,xml]
@@ -203,6 +215,59 @@ To run a second processor add another `<execution>` element. Here is an example 
 
 <1> uses `generate-resources` phase for the json output, to consider it as a resource.
 
+=== multiple identical processors
+
+To run the same processor on different inputs, add another `<execution>` element. Here is an example that configures two xref:spring:ROOT:index.adoc[openapi-processor-spring] processors:
+
+
+[source,xml]
+----
+<plugin>
+    <executions>
+        <execution>
+            <id>spring-interfaces api 1</id>
+            <phase>generate-sources</phase>
+
+            <configuration>
+                <id>api1</id> <!--1-->
+                <processor>spring</processor> <!--2-->
+                <apiPath>${project.basedir}/src/api1/openapi.yaml</apiPath>
+                <options>
+                    <values>
+                        <!-- if not set, it will automatically add the configuration id:
+                        <targetDir>${project.basedir}/target/generated-sources/api1</targetDir>
+                        -->
+                        <mapping>${project.basedir}/src/api1/mapping.yaml</mapping>
+                    </values>
+                </options>
+            </configuration>
+        </execution>
+
+        <execution>
+            <id>spring-interfaces api 2</id>
+            <phase>generate-sources</phase>
+
+            <configuration>
+                <id>api2</id> <!--1-->
+                <processor>spring</processor> <!--2-->
+                <apiPath>${project.basedir}/src/api2/openapi.yaml</apiPath>
+                <options>
+                    <values>
+                        <!-- if not set, it will automatically add the configuration id:
+                        <targetDir>${project.basedir}/target/generated-sources/api2</targetDir>
+                        -->
+                        <mapping>${project.basedir}/src/api2/mapping.yaml</mapping>
+                    </values>
+                </options>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+----
+
+<1> the configuration id, used to automatically select the `<targetDir/>` if it is not explicitly set. Otherwise, it is not used.
+<2> the processor id that should be used for this configuration.
+
 == executing the goal
 
 The `<execution>` s created in the previous chapter will automatically run the processor in the given `<phase>` s with commands like `./mvnw compile`.
@@ -213,7 +278,7 @@ Running the goal directly with `./mvnw openapi-processor:process` to check the s
 
 This can be solved in two ways:
 
-First, it is possible to the run the goal with an explicit `<execution>` like this:
+First, it is possible to run the goal with an explicit `<execution>` like this:
 
 [source,shell script]
 ----
@@ -243,7 +308,7 @@ The other solution is to change the `execution` that should run by default to a 
 </plugin>
 ----
 
-<1> using maven's default execution id instead of a user selected id.
+<1> using maven's default execution id instead of a user-selected id.
 
 With this configuration maven will use it when directly running the `process` goal from the shell, and it will also run it when the given phase is active.
 
@@ -252,13 +317,13 @@ With this configuration maven will use it when directly running the `process` go
 
 === source files
 
-Starting with the release 2024.1 it is no longer necessary to manually add the generated sources to the build. The plugin will automatically add the `targetDir` as compile source root.
+Starting with the release 2024.1, it is no longer necessary to manually add the generated sources to the build. The plugin will automatically add the `targetDir` as compile source root.
 
 It can be disabled by setting the plugin configuration `<addSourceRoot>` to `false`.
 
 === resource files
 
-If the output of the processor (e.g. generated by openapi-processor-json) should be used as resource add a resource directory.
+If the output of the processor, (e.g., generated by openapi-processor-json) should be used as a resource, add a resource directory.
 
 [source,xml]
 ----
@@ -276,4 +341,4 @@ If the output of the processor (e.g. generated by openapi-processor-json) should
 
 == Samples
 
-See the maven sample in the xref:samples::index.adoc[samples] for a working spring boot example.
+See the maven samples in the xref:samples::index.adoc[samples] for a working example using Spring Boot. Look into the parent `pom.xml` in the root folder to find the samples which have a maven configuration.
