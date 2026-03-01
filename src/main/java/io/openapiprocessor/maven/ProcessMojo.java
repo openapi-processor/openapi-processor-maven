@@ -22,6 +22,7 @@ import java.util.Map;
 /**
  * run an openapi-processor.
  */
+@SuppressWarnings({"DefaultAnnotationParam", "unused"})
 @Mojo (name = "process", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class ProcessMojo extends AbstractMojo {
     public static final String API_PATH = "apiPath";
@@ -113,7 +114,7 @@ public class ProcessMojo extends AbstractMojo {
         return String.join(File.separator, directories);
     }
 
-    private Map<String, Object> createProperties () throws MojoExecutionException {
+    private Map<String, Object> createProperties () {
         Map<String, Object> properties = new HashMap<> ();
 
         addProperties (options, properties);
@@ -157,5 +158,4 @@ public class ProcessMojo extends AbstractMojo {
             apiPath = new File((String) properties.get (API_PATH));
         }
    }
-
 }
