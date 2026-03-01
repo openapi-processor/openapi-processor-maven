@@ -21,7 +21,7 @@ import org.apache.maven.shared.utils.io.DirectoryScanner;
 import java.io.File;
 
 /**
- * check if any input y(a)ml files is newer than any output file.
+ * check if any input y(a)ml file is newer than any output file.
  *
  * @author Martin Hauner
  */
