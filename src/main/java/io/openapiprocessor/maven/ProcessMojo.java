@@ -72,6 +72,7 @@ public class ProcessMojo extends AbstractMojo {
             log.info(String.format ("%10s - %s", "targetDir", joinDirs("${project.basedir}", relativeTargetDir)));
 
             File targetRoot = new File(targetDir);
+            makeDirs(targetRoot);
             UpToDateCheck upToDateCheck = new UpToDateCheck ();
             boolean upToDate = upToDateCheck.isUpToDate (source.getParentFile(), targetRoot);
 
@@ -95,6 +96,11 @@ public class ProcessMojo extends AbstractMojo {
         }
 
         return id;
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    private void makeDirs(File dir) {
+        dir.mkdirs();
     }
 
     private String stripBaseDir (String source) {
