@@ -81,7 +81,7 @@ public class ProcessMojo extends AbstractMojo {
             if (!upToDate) {
                 log.info("Changes detected - generating target files!");
 
-                new ProcessorRunner(id, properties).run();
+                new ProcessorRunner(log, id, properties).run();
 
             } else {
                 log.info("Nothing to process - all generated target files are up to date.");

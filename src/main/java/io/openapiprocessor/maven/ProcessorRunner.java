@@ -5,6 +5,8 @@
 
 package io.openapiprocessor.maven;
 
+import org.apache.maven.plugin.logging.Log;
+
 import java.util.Map;
 import java.util.Optional;
 
@@ -13,11 +15,12 @@ import java.util.Optional;
  * openapiProcessor configuration.
  */
 class ProcessorRunner {
-
+    private final Log log;
     private final String processorName;
     private final Map<String, ?> processorProps;
 
-    ProcessorRunner (String processorName, Map<String, ?> processorProps) {
+    ProcessorRunner (Log log, String processorName, Map<String, ?> processorProps) {
+        this.log = log;
         this.processorName = processorName;
         this.processorProps = processorProps;
     }
@@ -53,6 +56,7 @@ class ProcessorRunner {
 
             processorOld.ifPresent (openApiProcessor -> openApiProcessor.run (processorProps));
 
+            log.error(String.format("Processor '%s' not found!", processorName));
         } catch (Exception e) {
             throw e;
         }
