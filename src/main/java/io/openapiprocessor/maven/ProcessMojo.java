@@ -30,6 +30,9 @@ public class ProcessMojo extends AbstractMojo {
     @Parameter(required = true)
     private String id;
 
+    @Parameter(required = false)
+    private String processor;
+
     @Parameter(required = true)
     private File apiPath;
 
@@ -45,7 +48,7 @@ public class ProcessMojo extends AbstractMojo {
     @Override
     public void execute () throws MojoExecutionException {
         Log log = getLog();
-        String processor = String.format ("openapi-processor-%s", id);
+        String processor = String.format ("openapi-processor-%s", getProcessor());
 
         try {
             log.info(String.format ("%10s - %s", "processor", processor));
@@ -84,6 +87,14 @@ public class ProcessMojo extends AbstractMojo {
         } catch (Exception e) {
             throw new MojoExecutionException (String.format("Execution failed - %s", processor), e);
         }
+    }
+
+    private String getProcessor () {
+        if (processor != null) {
+            return processor;
+        }
+
+        return id;
     }
 
     private String stripBaseDir (String source) {
