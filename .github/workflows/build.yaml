@@ -93,14 +93,14 @@ jobs:
         server-username: PUBLISH_USER
         server-password: PUBLISH_KEY
 
-    - name: Verify GPG Key Expiry
+    - name: verify sign key expiry
       run: |
-        echo "${{ secrets.SIGN_KEY_2026 }}" | gpg --show-keys
+        echo "${{ secrets.SIGN_KEY }}" | gpg --show-keys
 
     - name: publish snapshot
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SIGN_KEY: ${{ secrets.SIGN_KEY_2026 }}
+        SIGN_KEY: ${{ secrets.SIGN_KEY }}
         SIGN_KEY_PASS: ${{ secrets.SIGN_PWD }}
         PUBLISH_USER: ${{ secrets.PUBLISH_USER }}
         PUBLISH_KEY: ${{ secrets.PUBLISH_KEY }}
